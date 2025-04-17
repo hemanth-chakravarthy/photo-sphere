@@ -2,17 +2,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, Share2, MapPin } from "lucide-react";
-import { Photo } from "@/data/photos";
 import { cn } from "@/lib/utils";
 
-interface PhotoCardProps {
-  photo: Photo;
-  priority?: boolean;
-  className?: string;
-  onClick?: (photo: Photo) => void;
-}
-
-const PhotoCard = ({ photo, priority = false, className, onClick }: PhotoCardProps) => {
+const PhotoCard = ({ photo, priority = false, className, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
