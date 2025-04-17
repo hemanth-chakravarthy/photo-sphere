@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import { photos } from "@/data/photos";
 
 const Index = () => {
-  const galleryRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef(null);
   
   const scrollToGallery = () => {
     galleryRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -35,3 +35,4 @@ const Index = () => {
 };
 
 export default Index;
+
