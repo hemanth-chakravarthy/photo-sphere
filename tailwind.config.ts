@@ -18,6 +18,10 @@ export default {
 			}
 		},
 		extend: {
+            fontFamily: {
+                sans: ['Montserrat', 'sans-serif'],
+                serif: ['Playfair Display', 'serif'],
+            },
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -52,6 +56,19 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+                photosphere: {
+                    50: '#f5f7f6',
+                    100: '#e0e4e3',
+                    200: '#c1cbc9',
+                    300: '#9aaba8',
+                    400: '#768a87',
+                    500: '#5d706e',
+                    600: '#465857',
+                    700: '#394847',
+                    800: '#2e3a39',
+                    900: '#283130',
+                    950: '#141c1c',
+                },
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
