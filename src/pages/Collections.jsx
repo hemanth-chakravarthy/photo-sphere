@@ -1,10 +1,12 @@
 
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { collections } from "@/data/photos";
 import CollectionCard from "@/components/CollectionCard";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ArrowRight } from "lucide-react";
 
 const Collections = () => {
   return (
