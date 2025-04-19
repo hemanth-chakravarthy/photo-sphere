@@ -10,18 +10,18 @@ const Gallery = () => {
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
       
-      <main className="flex-1 pt-28 pb-16">
-        <div className="container mx-auto px-4 md:px-6">
+      <main className="flex-1 pt-32 pb-20">
+        <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-12 text-center"
+            className="mb-16 text-center"
           >
-            <h1 className="text-3xl md:text-4xl font-serif text-photosphere-800 mb-4">
+            <h1 className="text-3xl md:text-5xl font-serif text-photosphere-800 mb-4">
               Photo Gallery
             </h1>
-            <p className="text-photosphere-600 max-w-2xl mx-auto">
+            <p className="text-photosphere-600 max-w-2xl mx-auto text-lg">
               Explore the world through my lens. A collection of moments captured from around the globe.
             </p>
           </motion.div>
