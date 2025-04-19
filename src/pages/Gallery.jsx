@@ -1,5 +1,4 @@
 
-import { useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PhotoGrid from "@/components/PhotoGrid";
@@ -8,11 +7,11 @@ import { motion } from "framer-motion";
 
 const Gallery = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
       
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-6">
+      <main className="flex-1 pt-28 pb-16">
+        <div className="container mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
