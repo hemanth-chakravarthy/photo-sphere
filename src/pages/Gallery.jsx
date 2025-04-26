@@ -4,8 +4,49 @@ import Footer from "@/components/Footer";
 import PhotoGrid from "@/components/PhotoGrid";
 import { photos } from "@/data/photos";
 import { motion } from "framer-motion";
+import { Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 const Gallery = () => {
+  const [localPhotos, setLocalPhotos] = useState(photos);
+
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    
+    files.forEach(file => {
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload only image files",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const newPhoto = {
+          id: `local-${Date.now()}-${file.name}`,
+          title: file.name.split('.')[0],
+          src: e.target.result,
+          alt: file.name,
+          width: 800,
+          height: 600
+        };
+
+        setLocalPhotos(prev => [...prev, newPhoto]);
+        toast({
+          title: "Image uploaded",
+          description: "Your image has been added to the gallery",
+        });
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
@@ -21,12 +62,32 @@ const Gallery = () => {
             <h1 className="text-3xl md:text-5xl font-serif text-photosphere-800 mb-4">
               Photo Gallery
             </h1>
-            <p className="text-photosphere-600 max-w-2xl mx-auto text-lg">
+            <p className="text-photosphere-600 max-w-2xl mx-auto text-lg mb-8">
               Explore the world through my lens. A collection of moments captured from around the globe.
             </p>
+            
+            <label htmlFor="image-upload">
+              <Button 
+                variant="outline"
+                className="gap-2"
+                size="lg"
+                onClick={() => document.getElementById('image-upload').click()}
+              >
+                <Upload size={20} />
+                Upload Images
+              </Button>
+            </label>
+            <input
+              type="file"
+              id="image-upload"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleFileUpload}
+            />
           </motion.div>
           
-          <PhotoGrid photos={photos} />
+          <PhotoGrid photos={localPhotos} />
         </div>
       </main>
       
