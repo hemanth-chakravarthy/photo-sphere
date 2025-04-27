@@ -27,24 +27,35 @@ const Gallery = () => {
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        const newPhoto = {
-          id: `local-${Date.now()}-${file.name}`,
-          title: file.name.split('.')[0],
-          src: e.target.result,
-          alt: file.name,
-          width: 800,
-          height: 600
-        };
+        // Create a new image element to get the actual dimensions
+        const img = new Image();
+        img.onload = () => {
+          const newPhoto = {
+            id: `local-${Date.now()}-${file.name}`,
+            title: file.name.split('.')[0],
+            src: e.target.result,
+            alt: file.name,
+            width: img.width,
+            height: img.height,
+            location: "My Uploads"
+          };
 
-        setLocalPhotos(prev => [...prev, newPhoto]);
-        toast({
-          title: "Image uploaded",
-          description: "Your image has been added to the gallery",
-        });
+          setLocalPhotos(prev => [...prev, newPhoto]);
+          toast({
+            title: "Image uploaded",
+            description: "Your image has been added to the gallery",
+          });
+        };
+        
+        // Set the source to load the image
+        img.src = e.target.result;
       };
 
       reader.readAsDataURL(file);
     });
+    
+    // Clear the input to allow uploading the same file again
+    event.target.value = '';
   };
 
   return (
