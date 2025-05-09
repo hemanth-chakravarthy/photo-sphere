@@ -6,7 +6,7 @@ import { photos } from "@/data/photos";
 import { motion } from "framer-motion";
 import { Upload, Lock, LockOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import {
   Dialog,
@@ -47,7 +47,7 @@ const Gallery = () => {
   };
 
   // Check if user was previously authenticated
-  useState(() => {
+  useEffect(() => {
     if (localStorage.getItem("isPhotoSphereAdmin") === "true") {
       setIsAuthenticated(true);
     }
@@ -73,6 +73,10 @@ const Gallery = () => {
     }
 
     const files = Array.from(event.target.files);
+    
+    if (files.length === 0) {
+      return;
+    }
     
     files.forEach(file => {
       if (!file.type.startsWith('image/')) {
@@ -121,7 +125,7 @@ const Gallery = () => {
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
       
-      <main className="flex-1 pt-100 pb-20">
+      <main className="flex-1 pt-16 pb-20">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -138,7 +142,7 @@ const Gallery = () => {
             
             {isAuthenticated ? (
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <label htmlFor="image-upload">
+                <label htmlFor="image-upload" className="cursor-pointer">
                   <Button 
                     variant="outline"
                     className="gap-2"
@@ -147,15 +151,15 @@ const Gallery = () => {
                     <Upload size={20} />
                     Upload Images
                   </Button>
+                  <input
+                    type="file"
+                    id="image-upload"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
                 </label>
-                <input
-                  type="file"
-                  id="image-upload"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileUpload}
-                />
                 
                 <Button 
                   variant="ghost"
