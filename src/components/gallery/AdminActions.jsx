@@ -15,7 +15,7 @@ const AdminActions = ({ isAuthenticated, onLogout, onFileUpload }) => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+    <div className="flex flex-col items-center justify-center gap-6">
       <FileUpload 
         onFileUpload={onFileUpload} 
         isAuthenticated={isAuthenticated} 
