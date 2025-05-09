@@ -14,13 +14,15 @@ const Gallery = () => {
   
   // Check if user was previously authenticated
   useEffect(() => {
-    if (localStorage.getItem("isPhotoSphereAdmin") === "true") {
+    const authStatus = localStorage.getItem("isPhotoSphereAdmin");
+    if (authStatus === "true") {
       setIsAuthenticated(true);
     }
   }, []);
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem("isPhotoSphereAdmin");
   };
 
   const handleAuthentication = () => {
@@ -28,7 +30,8 @@ const Gallery = () => {
   };
 
   const handleFileUpload = (newPhoto) => {
-    setLocalPhotos(prev => [...prev, newPhoto]);
+    console.log("Adding new photo:", newPhoto);
+    setLocalPhotos(prev => [newPhoto, ...prev]);
   };
 
   return (

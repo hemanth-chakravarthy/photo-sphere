@@ -7,7 +7,6 @@ import FileUpload from "./FileUpload";
 const AdminActions = ({ isAuthenticated, onLogout, onFileUpload }) => {
   const handleLogout = () => {
     onLogout();
-    localStorage.removeItem("isPhotoSphereAdmin");
     toast({
       title: "Logged out",
       description: "You have been logged out",
@@ -26,6 +25,7 @@ const AdminActions = ({ isAuthenticated, onLogout, onFileUpload }) => {
         className="gap-2"
         size="lg"
         onClick={handleLogout}
+        type="button"
       >
         <LockOpen size={20} />
         Logout

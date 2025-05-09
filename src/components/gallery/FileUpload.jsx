@@ -18,7 +18,7 @@ const FileUpload = ({ onFileUpload, isAuthenticated }) => {
       return;
     }
 
-    const files = Array.from(event.target.files);
+    const files = Array.from(event.target.files || []);
     
     if (files.length === 0) {
       return;
@@ -26,7 +26,7 @@ const FileUpload = ({ onFileUpload, isAuthenticated }) => {
 
     // Create preview objects
     const newPreviews = files.map(file => ({
-      id: `preview-${Date.now()}-${file.name}`,
+      id: `preview-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
       name: file.name,
       file: file,
       previewUrl: URL.createObjectURL(file)
@@ -57,7 +57,7 @@ const FileUpload = ({ onFileUpload, isAuthenticated }) => {
         const img = new Image();
         img.onload = () => {
           const newPhoto = {
-            id: `local-${Date.now()}-${file.name}`,
+            id: `local-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
             title: file.name.split('.')[0],
             src: e.target.result,
             alt: file.name,
@@ -97,6 +97,7 @@ const FileUpload = ({ onFileUpload, isAuthenticated }) => {
             variant="outline"
             className="gap-2"
             size="lg"
+            type="button"
           >
             <Upload size={20} />
             Select Images
@@ -116,6 +117,7 @@ const FileUpload = ({ onFileUpload, isAuthenticated }) => {
             onClick={handleUpload}
             variant="default"
             size="lg"
+            type="button"
           >
             Upload {previews.length} Image{previews.length !== 1 ? 's' : ''}
           </Button>
@@ -136,6 +138,7 @@ const FileUpload = ({ onFileUpload, isAuthenticated }) => {
               <button 
                 onClick={() => removePreview(preview.id)}
                 className="absolute top-1 right-1 bg-black/50 rounded-full p-1 hover:bg-black/70 transition-colors"
+                type="button"
               >
                 <X size={14} className="text-white" />
               </button>
