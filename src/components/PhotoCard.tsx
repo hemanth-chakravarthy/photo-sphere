@@ -3,15 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, Share2, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface Photo {
-  id: string;
-  src: string;
-  alt: string;
-  title: string;
-  location?: string;
-  featured?: boolean;
-}
+import { Photo } from "@/data/photos";
 
 interface PhotoCardProps {
   photo: Photo;
