@@ -9,6 +9,8 @@ export interface Photo {
   height: number;
   featured?: boolean;
   tags?: string[];
+  category?: string;
+  description?: string;
 }
 
 // These images are placeholders that will be replaced with the user's actual photos
@@ -22,7 +24,8 @@ export const photos: Photo[] = [
     width: 800,
     height: 600,
     featured: true,
-    tags: ["mountains", "nature", "landscape"]
+    tags: ["mountains", "nature", "landscape"],
+    category: "landscape"
   },
   {
     id: "2",
@@ -32,7 +35,8 @@ export const photos: Photo[] = [
     alt: "Foggy mountain summit",
     width: 800,
     height: 1000,
-    tags: ["forest", "fog", "nature"]
+    tags: ["forest", "fog", "nature"],
+    category: "nature"
   },
   {
     id: "3",
@@ -43,7 +47,8 @@ export const photos: Photo[] = [
     width: 800,
     height: 534,
     featured: true,
-    tags: ["ocean", "wave", "water"]
+    tags: ["ocean", "wave", "water"],
+    category: "landscape"
   },
   {
     id: "4",
@@ -53,7 +58,8 @@ export const photos: Photo[] = [
     alt: "Landscape photo of mountain alps",
     width: 800,
     height: 1200,
-    tags: ["mountains", "snow", "landscape"]
+    tags: ["mountains", "snow", "landscape"],
+    category: "landscape"
   },
   {
     id: "5",
@@ -63,7 +69,8 @@ export const photos: Photo[] = [
     alt: "River surrounded by rock formation",
     width: 800,
     height: 800,
-    tags: ["canyon", "river", "rocks"]
+    tags: ["canyon", "river", "rocks"],
+    category: "landscape"
   },
   {
     id: "6",
@@ -73,7 +80,8 @@ export const photos: Photo[] = [
     alt: "Landmark photography of trees near rocky mountain under blue skies daytime",
     width: 800,
     height: 534,
-    tags: ["forest", "trees", "nature"]
+    tags: ["forest", "trees", "nature"],
+    category: "nature"
   },
   {
     id: "7",
@@ -84,7 +92,8 @@ export const photos: Photo[] = [
     width: 800,
     height: 1200,
     featured: true,
-    tags: ["sunset", "forest", "light"]
+    tags: ["sunset", "forest", "light"],
+    category: "nature"
   },
   {
     id: "8",
@@ -94,7 +103,8 @@ export const photos: Photo[] = [
     alt: "Gray concrete bridge and waterfalls during daytime",
     width: 800,
     height: 534,
-    tags: ["bridge", "waterfall", "architecture"]
+    tags: ["bridge", "waterfall", "architecture"],
+    category: "architecture"
   },
   {
     id: "9",
@@ -104,7 +114,8 @@ export const photos: Photo[] = [
     alt: "River between mountains under white clouds",
     width: 800,
     height: 534,
-    tags: ["valley", "river", "mountains"]
+    tags: ["valley", "river", "mountains"],
+    category: "landscape"
   },
   {
     id: "10",
@@ -114,7 +125,8 @@ export const photos: Photo[] = [
     alt: "Photo of pine trees",
     width: 800,
     height: 1200,
-    tags: ["forest", "pine", "trees"]
+    tags: ["forest", "pine", "trees"],
+    category: "nature"
   },
   {
     id: "11",
@@ -124,30 +136,68 @@ export const photos: Photo[] = [
     alt: "Low angle photography of trees at daytime",
     width: 800,
     height: 1200,
-    tags: ["forest", "trees", "canopy"]
+    tags: ["forest", "trees", "canopy"],
+    category: "nature"
   }
 ];
 
-export const collections = [
-  {
-    id: "1",
-    title: "Mountains & Peaks",
-    coverImage: "https://images.unsplash.com/photo-1469474968028-56623f02e42e",
-    description: "Majestic mountains and stunning peaks from around the world",
-    photoIds: ["1", "4"]
-  },
-  {
-    id: "2",
-    title: "Forest Stories",
-    coverImage: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843",
-    description: "Enchanting forests and woodland scenes",
-    photoIds: ["2", "6", "7", "10", "11"]
-  },
-  {
-    id: "3",
-    title: "Water & Reflections",
-    coverImage: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21",
-    description: "Oceans, lakes, rivers, and everything water",
-    photoIds: ["3", "5", "9"]
-  }
-];
+export interface Collection {
+  id: string;
+  title: string;
+  description: string;
+  coverImage: string;
+  category: string;
+  photoIds: string[];
+}
+
+// Generate collections dynamically based on categories
+export const generateCollections = (): Collection[] => {
+  const categories = Array.from(new Set(photos.map(photo => photo.category).filter(Boolean)));
+  
+  const categoryInfo: Record<string, { title: string; description: string }> = {
+    landscape: {
+      title: "Landscapes",
+      description: "Breathtaking landscapes and natural vistas from around the world"
+    },
+    nature: {
+      title: "Nature",
+      description: "The beauty of the natural world captured in stunning detail"
+    },
+    architecture: {
+      title: "Architecture",
+      description: "Architectural marvels and structural beauty"
+    },
+    street: {
+      title: "Street Photography",
+      description: "Life on the streets captured in candid moments"
+    },
+    portrait: {
+      title: "Portraits",
+      description: "Intimate portraits showcasing human emotion and character"
+    },
+    wildlife: {
+      title: "Wildlife",
+      description: "Amazing creatures in their natural habitats"
+    },
+    abstract: {
+      title: "Abstract",
+      description: "Artistic interpretations and abstract compositions"
+    }
+  };
+
+  return categories.map(category => {
+    const categoryPhotos = photos.filter(photo => photo.category === category);
+    const info = categoryInfo[category!] || { title: category!, description: `Collection of ${category} photography` };
+    
+    return {
+      id: category!,
+      title: info.title,
+      description: info.description,
+      category: category!,
+      coverImage: categoryPhotos[0]?.src || "",
+      photoIds: categoryPhotos.map(photo => photo.id)
+    };
+  });
+};
+
+export const collections = generateCollections();

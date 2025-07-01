@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { collections } from "@/data/photos";
+import { collections, photos } from "@/data/photos";
 import CollectionCard from "@/components/CollectionCard";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
@@ -23,7 +23,7 @@ const Collections = () => {
               Our Collections
             </h1>
             <p className="text-photosphere-600 max-w-2xl mx-auto">
-              Explore our carefully curated photo collections, each telling its own unique story.
+              Explore our carefully curated photo collections, dynamically organized by category and style.
             </p>
           </motion.div>
 
@@ -64,12 +64,17 @@ const Collections = () => {
                       <p className="text-photosphere-600 text-sm mb-4">
                         {collection.description}
                       </p>
-                      <a
-                        href={`/collections/${collection.id}`}
-                        className="text-accent hover:underline text-sm font-medium"
-                      >
-                        View Collection →
-                      </a>
+                      <div className="flex justify-between items-center">
+                        <span className="text-photosphere-500 text-sm">
+                          {collection.photoIds.length} photos
+                        </span>
+                        <a
+                          href={`/collections/${collection.id}`}
+                          className="text-accent hover:underline text-sm font-medium"
+                        >
+                          View Collection →
+                        </a>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
