@@ -1,61 +1,35 @@
 
-import { useState, useEffect } from "react";
+import { useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PhotoGrid from "@/components/PhotoGrid";
-import GalleryHeader from "@/components/gallery/GalleryHeader";
-import AuthenticationDialog from "@/components/gallery/AuthenticationDialog";
 import { photos } from "@/data/photos";
+import { motion } from "framer-motion";
 
 const Gallery = () => {
-  const [localPhotos, setLocalPhotos] = useState(photos);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
-  
-  // Check if user was previously authenticated
-  useEffect(() => {
-    const authStatus = localStorage.getItem("isPhotoSphereAdmin");
-    if (authStatus === "true") {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("isPhotoSphereAdmin");
-  };
-
-  const handleAuthentication = () => {
-    setIsAuthenticated(true);
-  };
-
-  const handleFileUpload = (newPhoto) => {
-    console.log("Adding new photo:", newPhoto);
-    setLocalPhotos(prev => [newPhoto, ...prev]);
-  };
-
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white">
       <Navbar />
       
-      <main className="flex-1 pt-16 pb-20">
+      <main className="pt-24 pb-16">
         <div className="container mx-auto px-6">
-          <GalleryHeader
-            isAuthenticated={isAuthenticated}
-            onShowLoginDialog={() => setShowAuthDialog(true)}
-            onLogout={handleLogout}
-            onFileUpload={handleFileUpload}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center"
+          >
+            <h1 className="text-3xl md:text-4xl font-serif text-photosphere-800 mb-4">
+              Photo Gallery
+            </h1>
+            <p className="text-photosphere-600 max-w-2xl mx-auto">
+              Explore the world through my lens. A collection of moments captured from around the globe.
+            </p>
+          </motion.div>
           
-          <PhotoGrid photos={localPhotos} />
+          <PhotoGrid photos={photos} />
         </div>
       </main>
-      
-      <AuthenticationDialog 
-        isOpen={showAuthDialog} 
-        onClose={() => setShowAuthDialog(false)}
-        onAuthenticate={handleAuthentication}
-      />
       
       <Footer />
     </div>

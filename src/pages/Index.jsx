@@ -15,7 +15,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <Hero 
         title="WAY TO EXPLORE!"
@@ -35,3 +35,4 @@ const Index = () => {
 };
 
 export default Index;
+

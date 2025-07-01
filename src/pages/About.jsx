@@ -21,40 +21,39 @@ const About = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white">
       <Navbar />
       
-      <main className="flex-1 pt-32 pb-20">
+      <main className="pt-24 pb-16">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-5xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
-            <div className="text-center mb-16">
-              <h1 className="text-3xl md:text-5xl font-serif text-photosphere-800 mb-4">
+            <div className="text-center mb-12">
+              <h1 className="text-3xl md:text-4xl font-serif text-photosphere-800 mb-4">
                 About Us
               </h1>
-              <p className="text-photosphere-600 text-lg">
+              <p className="text-photosphere-600">
                 Capturing moments, creating memories, and sharing stories through the lens.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-12 mb-20">
+            <div className="grid md:grid-cols-2 gap-12 mb-16">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="flex flex-col justify-center"
               >
-                <h2 className="text-2xl md:text-3xl font-serif text-photosphere-800 mb-6">Our Story</h2>
-                <p className="text-photosphere-600 mb-6 text-lg">
+                <h2 className="text-2xl font-serif text-photosphere-800 mb-4">Our Story</h2>
+                <p className="text-photosphere-600 mb-4">
                   We are passionate photographers dedicated to capturing life's most precious moments. 
                   Our journey began with a simple love for photography and has evolved into a 
                   mission to share beautiful imagery with the world.
                 </p>
-                <p className="text-photosphere-600 text-lg">
+                <p className="text-photosphere-600">
                   Every photo tells a story, and we're here to help tell yours through our lens.
                 </p>
               </motion.div>
@@ -63,7 +62,7 @@ const About = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="relative h-80 md:h-auto rounded-lg overflow-hidden shadow-lg"
+                className="relative h-64 md:h-auto rounded-lg overflow-hidden"
               >
                 <img 
                   src="https://images.unsplash.com/photo-1472396961693-142e6e269027"
@@ -77,61 +76,61 @@ const About = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              className="bg-gray-50 rounded-lg p-8 md:p-12 shadow-md"
+              className="bg-gray-50 rounded-lg p-8"
             >
-              <h2 className="text-2xl md:text-3xl font-serif text-photosphere-800 mb-8 text-center">
+              <h2 className="text-2xl font-serif text-photosphere-800 mb-6 text-center">
                 Contact Us
               </h2>
               
-              <div className="grid md:grid-cols-2 gap-10">
+              <div className="grid md:grid-cols-2 gap-8">
                 <div>
-                  <div className="space-y-6 mb-8">
+                  <div className="space-y-4 mb-6">
                     <div className="flex items-center text-photosphere-600">
-                      <Mail className="w-5 h-5 mr-3 text-accent" />
-                      <span className="text-lg">hello@photosphere.com</span>
+                      <Mail className="w-5 h-5 mr-2" />
+                      <span>hello@photosphere.com</span>
                     </div>
                     <div className="flex items-center text-photosphere-600">
-                      <Phone className="w-5 h-5 mr-3 text-accent" />
-                      <span className="text-lg">+1 (555) 123-4567</span>
+                      <Phone className="w-5 h-5 mr-2" />
+                      <span>+1 (555) 123-4567</span>
                     </div>
                     <div className="flex items-center text-photosphere-600">
-                      <MapPin className="w-5 h-5 mr-3 text-accent" />
-                      <span className="text-lg">San Francisco, CA</span>
+                      <MapPin className="w-5 h-5 mr-2" />
+                      <span>San Francisco, CA</span>
                     </div>
                   </div>
                   
-                  <div className="flex space-x-4 mt-6">
-                    <a href="#" className="text-photosphere-600 hover:text-accent transition-colors p-2 bg-white rounded-full shadow-sm">
+                  <div className="flex space-x-4">
+                    <a href="#" className="text-photosphere-600 hover:text-accent">
                       <Github className="w-6 h-6" />
                     </a>
-                    <a href="#" className="text-photosphere-600 hover:text-accent transition-colors p-2 bg-white rounded-full shadow-sm">
+                    <a href="#" className="text-photosphere-600 hover:text-accent">
                       <Linkedin className="w-6 h-6" />
                     </a>
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="name" className="text-photosphere-700 text-base mb-1 block">Name</Label>
-                    <Input id="name" placeholder="Your name" required className="mt-1" />
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" placeholder="Your name" required />
                   </div>
                   
                   <div>
-                    <Label htmlFor="email" className="text-photosphere-700 text-base mb-1 block">Email</Label>
-                    <Input id="email" type="email" placeholder="Your email" required className="mt-1" />
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="Your email" required />
                   </div>
                   
                   <div>
-                    <Label htmlFor="message" className="text-photosphere-700 text-base mb-1 block">Message</Label>
+                    <Label htmlFor="message">Message</Label>
                     <textarea
                       id="message"
-                      className="flex w-full rounded-md border border-input bg-background px-3 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[120px] mt-1"
+                      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
                       placeholder="Your message"
                       required
                     />
                   </div>
                   
-                  <Button type="submit" className="w-full bg-accent hover:bg-accent/90 py-6 text-base">
+                  <Button type="submit" className="w-full">
                     Send Message
                   </Button>
                 </form>

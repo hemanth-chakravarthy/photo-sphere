@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 
 const Collections = () => {
   return (
-    <section className="py-12">
+    <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-6">
         <motion.div 
           className="flex justify-between items-baseline mb-8"
@@ -28,7 +28,7 @@ const Collections = () => {
         </motion.div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {collections.slice(0, 3).map(collection => (
+          {collections.map((collection, index) => (
             <CollectionCard key={collection.id} collection={collection} />
           ))}
         </div>
