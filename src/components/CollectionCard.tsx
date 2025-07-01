@@ -3,7 +3,19 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Image } from "lucide-react";
 
-const CollectionCard = ({ collection }) => {
+interface Collection {
+  id: string;
+  title: string;
+  description: string;
+  coverImage: string;
+  photoIds: string[];
+}
+
+interface CollectionCardProps {
+  collection: Collection;
+}
+
+const CollectionCard = ({ collection }: CollectionCardProps) => {
   return (
     <motion.div 
       className="group relative rounded-lg overflow-hidden bg-white shadow-md"

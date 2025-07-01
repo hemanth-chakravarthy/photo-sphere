@@ -4,11 +4,25 @@ import { motion } from "framer-motion";
 import PhotoCard from "@/components/PhotoCard";
 import PhotoModal from "@/components/PhotoModal";
 
-const PhotoGrid = ({ photos, columns = 3 }) => {
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
+interface Photo {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  location?: string;
+  featured?: boolean;
+}
+
+interface PhotoGridProps {
+  photos: Photo[];
+  columns?: number;
+}
+
+const PhotoGrid = ({ photos, columns = 3 }: PhotoGridProps) => {
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handlePhotoClick = (photo) => {
+  const handlePhotoClick = (photo: Photo) => {
     setSelectedPhoto(photo);
     setIsModalOpen(true);
   };
@@ -18,7 +32,7 @@ const PhotoGrid = ({ photos, columns = 3 }) => {
   };
 
   // Calculate column distribution
-  const columnPhotos = Array.from({ length: columns }, () => []);
+  const columnPhotos = Array.from({ length: columns }, () => [] as Photo[]);
   
   photos.forEach((photo, index) => {
     columnPhotos[index % columns].push(photo);

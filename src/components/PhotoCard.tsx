@@ -4,7 +4,23 @@ import { motion } from "framer-motion";
 import { Heart, Share2, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const PhotoCard = ({ photo, priority = false, className, onClick }) => {
+interface Photo {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  location?: string;
+  featured?: boolean;
+}
+
+interface PhotoCardProps {
+  photo: Photo;
+  priority?: boolean;
+  className?: string;
+  onClick?: (photo: Photo) => void;
+}
+
+const PhotoCard = ({ photo, priority = false, className, onClick }: PhotoCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
