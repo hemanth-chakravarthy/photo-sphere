@@ -1,5 +1,4 @@
 
-import { useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PhotoGrid from "@/components/PhotoGrid";
