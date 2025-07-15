@@ -2,7 +2,6 @@
 import { useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import VideoSection from "@/components/VideoSection";
 import FeaturedPhotos from "@/components/FeaturedPhotos";
 import Collections from "@/components/Collections";
 import Footer from "@/components/Footer";
@@ -23,8 +22,6 @@ const Index = () => {
         subtitle="Our world is amazing"
         scrollToGallery={scrollToGallery}
       />
-      
-      <VideoSection />
       
       <div ref={galleryRef}>
         <FeaturedPhotos photos={photos} />

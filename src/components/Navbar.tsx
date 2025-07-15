@@ -1,14 +1,16 @@
 
 import { useState, useEffect } from "react";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, Search, X, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 import SearchModal from "@/components/SearchModal";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,6 +79,15 @@ const Navbar = () => {
               >
                 About
               </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="text-photosphere-800 hover:text-accent font-medium transition-colors flex items-center gap-1"
+                >
+                  <Shield size={16} />
+                  Admin
+                </Link>
+              )}
             </nav>
 
             <div className="flex items-center">
@@ -136,6 +147,16 @@ const Navbar = () => {
             >
               About
             </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-colors flex items-center justify-center gap-2"
+                onClick={() => setIsOpen(false)}
+              >
+                <Shield size={20} />
+                Admin
+              </Link>
+            )}
           </nav>
         </div>
       </header>
