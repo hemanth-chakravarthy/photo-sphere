@@ -58,7 +58,7 @@ const PhotoUpload = () => {
         .getPublicUrl(fileName);
 
       // Create image element to get dimensions
-      const img = new Image();
+      const img = document.createElement('img');
       img.onload = async () => {
         // Save photo metadata to database
         const { error: dbError } = await supabase
@@ -226,7 +226,7 @@ const PhotoUpload = () => {
             <Checkbox
               id="featured"
               checked={featured}
-              onCheckedChange={setFeatured}
+              onCheckedChange={(checked) => setFeatured(checked === true)}
             />
             <Label htmlFor="featured">Featured Photo</Label>
           </div>
