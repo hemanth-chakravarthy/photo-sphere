@@ -2,9 +2,6 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Scene3D from "@/components/3D/Scene3D";
-import VintageCamera from "@/components/3D/VintageCamera";
-import FloatingCameras from "@/components/3D/FloatingElements";
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,55 +21,25 @@ const About = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* 3D Background Elements */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <Scene3D className="h-full w-full" enableZoom={false} enablePan={false} autoRotate>
-          <FloatingCameras count={4} />
-        </Scene3D>
-      </div>
+    <div className="min-h-screen bg-white">
+      <Navbar />
       
-      <div className="relative z-10">
-        <Navbar />
-        
-        <main className="pt-24 pb-16">
-          <div className="container mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="max-w-4xl mx-auto"
-            >
-              <div className="text-center mb-12">
-                <h1 className="text-3xl md:text-4xl font-serif text-photosphere-800 mb-4">
-                  About Us
-                </h1>
-                <p className="text-photosphere-600">
-                  Capturing moments, creating memories, and sharing stories through the lens.
-                </p>
-              </div>
-
-              {/* 3D Vintage Camera Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="mb-16"
-              >
-                <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg p-8">
-                  <h2 className="text-2xl font-serif text-photosphere-800 mb-6 text-center">
-                    The Art of Photography
-                  </h2>
-                  <div className="h-80 rounded-lg overflow-hidden">
-                    <Scene3D className="h-full" cameraPosition={[0, 0, 8]}>
-                      <VintageCamera />
-                    </Scene3D>
-                  </div>
-                  <p className="text-center text-photosphere-600 mt-4">
-                    Interactive 3D vintage camera - Click and drag to explore
-                  </p>
-                </div>
-              </motion.div>
+      <main className="pt-24 pb-16">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="text-center mb-12">
+              <h1 className="text-3xl md:text-4xl font-serif text-photosphere-800 mb-4">
+                About Us
+              </h1>
+              <p className="text-photosphere-600">
+                Capturing moments, creating memories, and sharing stories through the lens.
+              </p>
+            </div>
 
             <div className="grid md:grid-cols-2 gap-12 mb-16">
               <motion.div
@@ -169,12 +136,11 @@ const About = () => {
                 </form>
               </div>
             </motion.div>
-            </motion.div>
-          </div>
-        </main>
-        
-        <Footer />
-      </div>
+          </motion.div>
+        </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 };
