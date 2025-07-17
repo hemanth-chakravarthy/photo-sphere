@@ -1,4 +1,5 @@
-import { useRef, useState, useMemo } from 'react';
+
+import { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Text, Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -17,54 +18,95 @@ function PhotoFrame({ photo, position, onClick }: {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Load texture
-  useMemo(() => {
+  // Load texture with proper error handling
+  useEffect(() => {
     const loader = new THREE.TextureLoader();
-    loader.load(photo.src, (loadedTexture) => {
-      setTexture(loadedTexture);
-    });
+    setLoading(true);
+    
+    loader.load(
+      photo.src,
+      (loadedTexture) => {
+        // Configure texture for better quality
+        loadedTexture.minFilter = THREE.LinearFilter;
+        loadedTexture.magFilter = THREE.LinearFilter;
+        loadedTexture.wrapS = THREE.ClampToEdgeWrapping;
+        loadedTexture.wrapT = THREE.ClampToEdgeWrapping;
+        setTexture(loadedTexture);
+        setLoading(false);
+      },
+      undefined,
+      (error) => {
+        console.error('Error loading texture:', error);
+        setLoading(false);
+      }
+    );
   }, [photo.src]);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.05;
-      if (hovered) {
-        meshRef.current.scale.setScalar(1.1);
-      } else {
-        meshRef.current.scale.setScalar(1);
-      }
+      // Gentle floating animation
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3 + position[0]) * 0.05;
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.2;
+      
+      // Hover scale effect
+      const targetScale = hovered ? 1.1 : 1;
+      meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
     }
   });
 
   return (
     <group position={position}>
-      {/* Frame */}
+      {/* Photo frame border */}
+      <mesh position={[0, 0, -0.02]}>
+        <planeGeometry args={[2.4, 1.8]} />
+        <meshStandardMaterial color="#8B4513" roughness={0.8} metalness={0.1} />
+      </mesh>
+      
+      {/* Photo */}
       <mesh 
         ref={meshRef}
         onClick={onClick}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
+        position={[0, 0, 0.01]}
       >
-        <planeGeometry args={[2, 1.5]} />
-        <meshStandardMaterial 
-          map={texture} 
-          transparent 
-          opacity={hovered ? 0.9 : 0.8}
-        />
+        <planeGeometry args={[2.2, 1.6]} />
+        {texture ? (
+          <meshStandardMaterial 
+            map={texture} 
+            transparent 
+            opacity={hovered ? 0.95 : 0.85}
+            roughness={0.1}
+            metalness={0.0}
+          />
+        ) : (
+          <meshStandardMaterial 
+            color={loading ? "#f0f0f0" : "#cccccc"} 
+            transparent 
+            opacity={0.7}
+          />
+        )}
       </mesh>
       
-      {/* Photo border */}
-      <mesh position={[0, 0, -0.01]}>
-        <planeGeometry args={[2.2, 1.7]} />
-        <meshStandardMaterial color="#8B4513" />
-      </mesh>
+      {/* Loading indicator */}
+      {loading && (
+        <Html position={[0, 0, 0.02]} center>
+          <div className="bg-black/60 text-white p-2 rounded text-xs">
+            Loading...
+          </div>
+        </Html>
+      )}
       
-      {/* Photo title */}
-      {hovered && (
-        <Html position={[0, -1.2, 0]} center>
-          <div className="bg-black/80 text-white p-2 rounded text-sm max-w-32 text-center">
-            {photo.title}
+      {/* Photo title on hover */}
+      {hovered && !loading && (
+        <Html position={[0, -1.1, 0]} center>
+          <div className="bg-black/90 text-white p-2 rounded text-sm max-w-40 text-center">
+            <div className="font-semibold">{photo.title}</div>
+            {photo.location && (
+              <div className="text-xs text-gray-300 mt-1">{photo.location}</div>
+            )}
           </div>
         </Html>
       )}
@@ -76,12 +118,13 @@ export default function PhotoGallery3D({ photos, onPhotoClick }: PhotoGallery3DP
   const { camera } = useThree();
   const groupRef = useRef<THREE.Group>(null);
 
-  // Arrange photos in a 3D spiral gallery
+  // Arrange photos in a 3D spiral gallery with better spacing
   const photoPositions = useMemo(() => {
-    return photos.slice(0, 12).map((_, index) => {
-      const angle = (index / photos.slice(0, 12).length) * Math.PI * 4;
-      const radius = 8;
-      const height = Math.sin(angle * 0.5) * 3;
+    const displayPhotos = photos.slice(0, 16); // Show more photos
+    return displayPhotos.map((_, index) => {
+      const angle = (index / displayPhotos.length) * Math.PI * 3; // More spiral turns
+      const radius = 6 + Math.sin(angle * 0.5) * 2; // Varying radius
+      const height = Math.sin(angle * 0.3) * 4 + Math.cos(index * 0.5) * 2; // More varied heights
       
       return [
         Math.cos(angle) * radius,
@@ -93,19 +136,21 @@ export default function PhotoGallery3D({ photos, onPhotoClick }: PhotoGallery3DP
 
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += 0.003;
+      groupRef.current.rotation.y += 0.002; // Slower rotation
     }
   });
 
   return (
     <group ref={groupRef}>
-      {/* Ambient lighting */}
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
-      <pointLight position={[0, 10, 0]} intensity={0.5} />
+      {/* Enhanced lighting for better photo visibility */}
+      <ambientLight intensity={0.8} />
+      <directionalLight position={[10, 10, 5]} intensity={1.2} castShadow />
+      <directionalLight position={[-10, 5, -5]} intensity={0.8} />
+      <pointLight position={[0, 8, 0]} intensity={0.6} />
+      <pointLight position={[0, -8, 0]} intensity={0.3} />
       
       {/* Photos */}
-      {photos.slice(0, 12).map((photo, index) => (
+      {photos.slice(0, 16).map((photo, index) => (
         <PhotoFrame
           key={photo.id}
           photo={photo}
@@ -116,9 +161,9 @@ export default function PhotoGallery3D({ photos, onPhotoClick }: PhotoGallery3DP
       
       {/* Gallery title */}
       <Text
-        position={[0, 6, 0]}
-        fontSize={1.5}
-        color="#333"
+        position={[0, 8, 0]}
+        fontSize={1.8}
+        color="#2c3e50"
         anchorX="center"
         anchorY="middle"
         font="/fonts/inter.woff"
@@ -127,10 +172,10 @@ export default function PhotoGallery3D({ photos, onPhotoClick }: PhotoGallery3DP
       </Text>
       
       {/* Instructions */}
-      <Html position={[0, -6, 0]} center>
-        <div className="text-center text-gray-600">
-          <p>Click and drag to navigate • Scroll to zoom</p>
-          <p>Click on photos to view them</p>
+      <Html position={[0, -8, 0]} center>
+        <div className="text-center text-gray-700 bg-white/90 p-4 rounded-lg backdrop-blur-sm">
+          <p className="font-semibold mb-2">Navigate the 3D Gallery</p>
+          <p className="text-sm">Click and drag to rotate • Scroll to zoom • Click photos to view</p>
         </div>
       </Html>
     </group>
