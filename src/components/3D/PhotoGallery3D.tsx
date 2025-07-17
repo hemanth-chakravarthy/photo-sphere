@@ -79,9 +79,9 @@ export default function PhotoGallery3D({ photos, onPhotoClick }: PhotoGallery3DP
   // Arrange photos in a 3D spiral gallery
   const photoPositions = useMemo(() => {
     return photos.slice(0, 12).map((_, index) => {
-      const angle = (index / photos.length) * Math.PI * 4;
+      const angle = (index / photos.slice(0, 12).length) * Math.PI * 4;
       const radius = 8;
-      const height = Math.sin(angle * 0.5) * 2;
+      const height = Math.sin(angle * 0.5) * 3;
       
       return [
         Math.cos(angle) * radius,
@@ -93,7 +93,7 @@ export default function PhotoGallery3D({ photos, onPhotoClick }: PhotoGallery3DP
 
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += 0.005;
+      groupRef.current.rotation.y += 0.003;
     }
   });
 

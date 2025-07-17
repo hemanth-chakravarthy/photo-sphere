@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Scene3D from "@/components/3D/Scene3D";
 import VintageCamera from "@/components/3D/VintageCamera";
-import FloatingElements from "@/components/3D/FloatingElements";
+import FloatingCameras from "@/components/3D/FloatingElements";
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +28,7 @@ const About = () => {
       {/* 3D Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <Scene3D className="h-full w-full" enableZoom={false} enablePan={false} autoRotate>
-          <FloatingElements count={4} />
+          <FloatingCameras count={4} />
         </Scene3D>
       </div>
       

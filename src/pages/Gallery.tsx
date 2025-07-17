@@ -6,7 +6,7 @@ import PhotoGrid from "@/components/PhotoGrid";
 import PhotoModal from "@/components/PhotoModal";
 import Scene3D from "@/components/3D/Scene3D";
 import PhotoGallery3D from "@/components/3D/PhotoGallery3D";
-import FloatingElements from "@/components/3D/FloatingElements";
+import FloatingCameras from "@/components/3D/FloatingElements";
 import { photos, Photo } from "@/data/photos";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ const Gallery = () => {
       {/* 3D Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <Scene3D className="h-full w-full" enableZoom={false} enablePan={false} autoRotate>
-          <FloatingElements count={6} />
+          <FloatingCameras count={8} />
         </Scene3D>
       </div>
       

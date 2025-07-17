@@ -6,7 +6,7 @@ import FeaturedPhotos from "@/components/FeaturedPhotos";
 import Collections from "@/components/Collections";
 import Footer from "@/components/Footer";
 import Scene3D from "@/components/3D/Scene3D";
-import FloatingElements from "@/components/3D/FloatingElements";
+import FloatingCameras from "@/components/3D/FloatingElements";
 import { photos } from "@/data/photos";
 
 const Index = () => {
@@ -19,9 +19,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Subtle 3D Background Elements */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-20">
         <Scene3D className="h-full w-full" enableZoom={false} enablePan={false} autoRotate>
-          <FloatingElements count={8} />
+          <FloatingCameras count={6} />
         </Scene3D>
       </div>
       
