@@ -9,8 +9,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
 
-const PhotoUpload = () => {
+interface PhotoUploadProps {
+  onUploadSuccess?: () => void;
+}
+
+const PhotoUpload = ({ onUploadSuccess }: PhotoUploadProps = {}) => {
+  const { toast } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -47,14 +53,14 @@ const PhotoUpload = () => {
 
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('user-photos')
+        .from('photos')
         .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('user-photos')
+        .from('photos')
         .getPublicUrl(fileName);
 
       // Create image element to get dimensions
@@ -89,6 +95,14 @@ const PhotoUpload = () => {
         setFeatured(false);
         setUploadSuccess(true);
         
+        toast({
+          title: "Photo uploaded successfully!",
+          description: "Your photo has been added to the gallery.",
+        });
+
+        // Call the callback to refresh data
+        onUploadSuccess?.();
+        
         setTimeout(() => setUploadSuccess(false), 3000);
       };
       
@@ -96,7 +110,11 @@ const PhotoUpload = () => {
       
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Error uploading photo. Please try again.');
+      toast({
+        title: "Upload failed",
+        description: "There was an error uploading your photo. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsUploading(false);
     }

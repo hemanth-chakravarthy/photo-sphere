@@ -2,14 +2,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Image } from "lucide-react";
-
-interface Collection {
-  id: string;
-  title: string;
-  description: string;
-  coverImage: string;
-  photoIds: string[];
-}
+import { Collection } from "@/hooks/usePhotos";
 
 interface CollectionCardProps {
   collection: Collection;
@@ -44,7 +37,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-1 text-photosphere-500 text-sm">
             <Image size={16} />
-            <span>{collection.photoIds.length} photos</span>
+            <span>{collection.photos.length} photos</span>
           </div>
           
           <Link 

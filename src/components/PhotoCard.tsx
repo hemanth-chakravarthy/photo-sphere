@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, Share2, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Photo } from "@/data/photos";
+import { Photo } from "@/hooks/usePhotos";
 
 interface PhotoCardProps {
   photo: Photo;

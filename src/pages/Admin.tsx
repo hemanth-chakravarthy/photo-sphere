@@ -1,17 +1,20 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Upload, Settings } from "lucide-react";
+import { LogOut, Upload, Settings, Images } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminLogin from "@/components/AdminLogin";
 import PhotoUpload from "@/components/PhotoUpload";
+import PhotoManager from "@/components/PhotoManager";
+import { usePhotos } from "@/hooks/usePhotos";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const Admin = () => {
   const { user, isAdmin, signOut, loading } = useAuth();
+  const { refetch } = usePhotos();
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
@@ -78,10 +81,14 @@ const Admin = () => {
               </div>
 
               <Tabs defaultValue="upload" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="upload" className="flex items-center gap-2">
                     <Upload size={16} />
                     Upload Photos
+                  </TabsTrigger>
+                  <TabsTrigger value="manage" className="flex items-center gap-2">
+                    <Images size={16} />
+                    Manage Photos
                   </TabsTrigger>
                   <TabsTrigger value="settings" className="flex items-center gap-2">
                     <Settings size={16} />
@@ -90,7 +97,11 @@ const Admin = () => {
                 </TabsList>
 
                 <TabsContent value="upload" className="mt-8">
-                  <PhotoUpload />
+                  <PhotoUpload onUploadSuccess={refetch} />
+                </TabsContent>
+
+                <TabsContent value="manage" className="mt-8">
+                  <PhotoManager />
                 </TabsContent>
 
                 <TabsContent value="settings" className="mt-8">
