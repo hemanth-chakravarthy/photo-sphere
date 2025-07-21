@@ -2,10 +2,12 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PhotoGrid from "@/components/PhotoGrid";
-import { photos } from "@/data/photos";
+import { usePhotos } from "@/hooks/usePhotos";
 import { motion } from "framer-motion";
 
 const Gallery = () => {
+  const { photos, loading, error } = usePhotos();
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -26,7 +28,21 @@ const Gallery = () => {
             </p>
           </motion.div>
           
-          <PhotoGrid photos={photos} />
+          {loading ? (
+            <div className="text-center text-photosphere-600">
+              Loading photos...
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-600">
+              Error loading photos: {error}
+            </div>
+          ) : photos.length === 0 ? (
+            <div className="text-center text-photosphere-600">
+              No photos uploaded yet. Visit the admin panel to upload your first photo!
+            </div>
+          ) : (
+            <PhotoGrid photos={photos} />
+          )}
         </div>
       </main>
       

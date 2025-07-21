@@ -5,10 +5,11 @@ import Hero from "@/components/Hero";
 import FeaturedPhotos from "@/components/FeaturedPhotos";
 import Collections from "@/components/Collections";
 import Footer from "@/components/Footer";
-import { photos } from "@/data/photos";
+import { useFeaturedPhotos } from "@/hooks/usePhotos";
 
 const Index = () => {
   const galleryRef = useRef<HTMLDivElement>(null);
+  const { featuredPhotos, loading } = useFeaturedPhotos();
   
   const scrollToGallery = () => {
     galleryRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,7 +25,15 @@ const Index = () => {
       />
       
       <div ref={galleryRef}>
-        <FeaturedPhotos photos={photos} />
+        {loading ? (
+          <div className="py-12">
+            <div className="container mx-auto px-6">
+              <div className="text-center text-photosphere-600">Loading photos...</div>
+            </div>
+          </div>
+        ) : (
+          <FeaturedPhotos photos={featuredPhotos} />
+        )}
       </div>
       
       <Collections />

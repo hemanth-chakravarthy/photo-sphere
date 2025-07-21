@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import PhotoCard from "@/components/PhotoCard";
 import PhotoModal from "@/components/PhotoModal";
-import { Photo } from "@/data/photos";
+import { Photo } from "@/hooks/usePhotos";
 
 interface PhotoGridProps {
   photos: Photo[];

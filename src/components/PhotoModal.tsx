@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Photo } from "@/data/photos";
+import { Photo } from "@/hooks/usePhotos";
 
 interface PhotoModalProps {
   photo: Photo;

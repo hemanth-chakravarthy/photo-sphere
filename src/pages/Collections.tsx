@@ -2,11 +2,57 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { collections, photos } from "@/data/photos";
+import { useCollections } from "@/hooks/usePhotos";
 import CollectionCard from "@/components/CollectionCard";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const Collections = () => {
+  const { collections, loading, error } = useCollections();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="pt-24 pb-16">
+          <div className="container mx-auto px-6">
+            <div className="text-center text-photosphere-600">Loading collections...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="pt-24 pb-16">
+          <div className="container mx-auto px-6">
+            <div className="text-center text-red-600">Error loading collections: {error}</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (collections.length === 0) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="pt-24 pb-16">
+          <div className="container mx-auto px-6">
+            <div className="text-center text-photosphere-600">
+              No collections available yet. Upload some photos with categories to create collections!
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -65,8 +111,8 @@ const Collections = () => {
                         {collection.description}
                       </p>
                       <div className="flex justify-between items-center">
-                        <span className="text-photosphere-500 text-sm">
-                          {collection.photoIds.length} photos
+                       <span className="text-photosphere-500 text-sm">
+                          {collection.photos.length} photos
                         </span>
                         <a
                           href={`/collections/${collection.id}`}

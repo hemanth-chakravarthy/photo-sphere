@@ -1,11 +1,27 @@
 
 import { motion } from "framer-motion";
-import { collections } from "@/data/photos";
+import { useCollections } from "@/hooks/usePhotos";
 import CollectionCard from "@/components/CollectionCard";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 const Collections = () => {
+  const { collections, loading } = useCollections();
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center text-photosphere-600">Loading collections...</div>
+        </div>
+      </section>
+    );
+  }
+
+  if (collections.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-6">

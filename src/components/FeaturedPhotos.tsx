@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Photo } from "@/data/photos";
+import { Photo } from "@/hooks/usePhotos";
 import { Link } from "react-router-dom";
 
 interface FeaturedPhotosProps {
@@ -10,11 +10,11 @@ interface FeaturedPhotosProps {
 }
 
 const FeaturedPhotos = ({ photos }: FeaturedPhotosProps) => {
-  // Filter out featured photos
-  const featuredPhotos = photos.filter((photo) => photo.featured);
   const [hovered, setHovered] = useState<string | null>(null);
 
-  if (featuredPhotos.length === 0) return null;
+  // Photos are already filtered as featured
+
+  if (photos.length === 0) return null;
 
   return (
     <section className="py-12">
@@ -33,7 +33,7 @@ const FeaturedPhotos = ({ photos }: FeaturedPhotosProps) => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredPhotos.map((photo) => (
+          {photos.map((photo) => (
             <motion.div
               key={photo.id}
               className="relative aspect-[3/4] overflow-hidden rounded-md cursor-pointer"
