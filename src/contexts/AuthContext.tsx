@@ -30,24 +30,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Check if user is admin
-          const { data: adminUser } = await supabase
-            .from('admin_users')
-            .select('id')
-            .eq('id', session.user.id)
-            .maybeSingle();
-          
-          setIsAdmin(!!adminUser);
+          // Use setTimeout to defer the Supabase call and prevent deadlock
+          setTimeout(() => {
+            supabase
+              .from('admin_users')
+              .select('id')
+              .eq('id', session.user.id)
+              .maybeSingle()
+              .then(({ data: adminUser, error }) => {
+                setIsAdmin(!!adminUser);
+                setLoading(false);
+              });
+          }, 0);
         } else {
           setIsAdmin(false);
+          setLoading(false);
         }
-        
-        setLoading(false);
       }
     );
 
@@ -61,11 +64,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .select('id')
           .eq('id', session.user.id)
           .maybeSingle()
-          .then(({ data: adminUser }) => {
+          .then(({ data: adminUser, error }) => {
             setIsAdmin(!!adminUser);
             setLoading(false);
           });
       } else {
+        setIsAdmin(false);
         setLoading(false);
       }
     });
