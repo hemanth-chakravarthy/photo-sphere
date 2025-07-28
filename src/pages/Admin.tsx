@@ -17,10 +17,7 @@ const Admin = () => {
   const { refetch } = usePhotos();
   const [showLogin, setShowLogin] = useState(false);
 
-  console.log('Admin page render:', { user, isAdmin, loading, showLogin });
-
   useEffect(() => {
-    console.log('Admin useEffect:', { loading, isAdmin });
     if (!loading && !isAdmin) {
       setShowLogin(true);
     } else if (isAdmin) {
@@ -32,8 +29,6 @@ const Admin = () => {
     await signOut();
     setShowLogin(true);
   };
-
-  console.log('Admin page state:', { loading, showLogin, isAdmin });
 
   if (loading) {
     return (
