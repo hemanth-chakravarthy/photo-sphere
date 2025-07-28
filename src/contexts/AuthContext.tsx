@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             .from('admin_users')
             .select('id')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
           
           setIsAdmin(!!adminUser);
         } else {
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .from('admin_users')
           .select('id')
           .eq('id', session.user.id)
-          .single()
+          .maybeSingle()
           .then(({ data: adminUser }) => {
             setIsAdmin(!!adminUser);
             setLoading(false);
