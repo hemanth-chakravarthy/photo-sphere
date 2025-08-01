@@ -147,12 +147,19 @@ const PhotoModal = ({ photo, isOpen, onClose, photos }: PhotoModalProps) => {
 
                 <div className="absolute top-4 right-4 flex space-x-2">
                   <button
-                    className="p-2 text-white bg-black/30 rounded-full hover:bg-black/50 transition-colors"
-                    aria-label="Download photo"
-                  >
-                    <Download size={18} />
-                  </button>
-                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (navigator.share) {
+                        navigator.share({
+                          title: currentPhoto.title,
+                          text: currentPhoto.description || currentPhoto.title,
+                          url: window.location.href
+                        });
+                      } else {
+                        navigator.clipboard.writeText(window.location.href);
+                        // You could add a toast here to show copy success
+                      }
+                    }}
                     className="p-2 text-white bg-black/30 rounded-full hover:bg-black/50 transition-colors"
                     aria-label="Share photo"
                   >

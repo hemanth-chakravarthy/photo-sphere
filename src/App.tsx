@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Gallery from "./pages/Gallery";
 import About from "./pages/About";
 import Collections from "./pages/Collections";
+import CollectionDetail from "./pages/CollectionDetail";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/about" element={<About />} />
             <Route path="/collections" element={<Collections />} />
+            <Route path="/collections/:id" element={<CollectionDetail />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
