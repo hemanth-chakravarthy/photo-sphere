@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminLogin from "@/components/AdminLogin";
 import PhotoUpload from "@/components/PhotoUpload";
 import PhotoManager from "@/components/PhotoManager";
-import { SimpleAdminSettings } from "@/components/SimpleAdminSettings";
+import { AdminSettings } from "@/components/AdminSettings";
 import { usePhotos } from "@/hooks/usePhotos";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -106,7 +106,7 @@ const Admin = () => {
                 </TabsContent>
 
                 <TabsContent value="settings" className="mt-8">
-                  <SimpleAdminSettings />
+                  <AdminSettings />
                 </TabsContent>
               </Tabs>
             </motion.div>
