@@ -44,6 +44,11 @@ const PhotoModal = ({ photo, isOpen, onClose, photos }: PhotoModalProps) => {
     };
   }, [isOpen, currentIndex, photos]);
 
+  // Update current photo when prop changes
+  useEffect(() => {
+    setCurrentPhoto(photo);
+  }, [photo]);
+
   // Reset loading state when photo changes
   useEffect(() => {
     setIsLoading(true);
