@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Photo } from "@/hooks/usePhotos";
-import { WatermarkedImage } from "@/components/WatermarkedImage";
 
 interface PhotoModalProps {
   photo: Photo;
@@ -132,7 +131,7 @@ const PhotoModal = ({ photo, isOpen, onClose, photos }: PhotoModalProps) => {
                     <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
                   </div>
                 )}
-                <WatermarkedImage
+                <img
                   src={currentPhoto.src}
                   alt={currentPhoto.alt}
                   className="max-w-full max-h-[80vh] object-contain shadow-xl"

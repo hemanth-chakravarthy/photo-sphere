@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Heart, Share2, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Photo } from "@/hooks/usePhotos";
-import { WatermarkedImage } from "@/components/WatermarkedImage";
 
 interface PhotoCardProps {
   photo: Photo;
@@ -31,9 +30,10 @@ const PhotoCard = ({ photo, priority = false, className, onClick }: PhotoCardPro
       whileHover={{ y: -5 }}
     >
       <div className="overflow-hidden relative rounded-md bg-photosphere-100">
-        <WatermarkedImage
+        <img
           src={photo.src}
           alt={photo.alt}
+          loading={priority ? "eager" : "lazy"}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         
