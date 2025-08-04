@@ -1,16 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
-
-// Simple debounce utility
-function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-}
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -19,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Globe, Palette, Home, Droplets, Mail, MessageSquare, Save, Loader2, Upload, CheckCircle } from "lucide-react";
+import { Globe, Palette, Home, Droplets, Mail, MessageSquare, Save, Loader2, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ContactMessages } from "@/components/settings/ContactMessages";
@@ -33,7 +21,6 @@ export const AdminSettings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [watermarkFile, setWatermarkFile] = useState<File | null>(null);
-  const [uploadingWatermark, setUploadingWatermark] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -53,18 +40,14 @@ export const AdminSettings = () => {
       const settingsMap: SiteSettings = {};
       data?.forEach((setting: any) => {
         let value = setting.setting_value;
-        // Handle JSONB values properly
-        if (typeof value === 'object' && value !== null) {
-          settingsMap[setting.setting_key] = value;
-        } else if (typeof value === 'string') {
+        if (typeof value === 'string') {
           try {
-            settingsMap[setting.setting_key] = JSON.parse(value);
+            value = JSON.parse(value);
           } catch {
-            settingsMap[setting.setting_key] = value;
+            // Keep as string
           }
-        } else {
-          settingsMap[setting.setting_key] = value;
         }
+        settingsMap[setting.setting_key] = value;
       });
 
       setSettings(settingsMap);
@@ -100,32 +83,6 @@ export const AdminSettings = () => {
     }
   };
 
-  // Auto-save individual settings with debouncing
-  const saveSettingDebounced = useCallback(
-    debounce(async (key: string, value: any) => {
-      try {
-        const { error } = await supabase
-          .from('site_settings' as any)
-          .upsert({
-            setting_key: key,
-            setting_value: value
-          }, {
-            onConflict: 'setting_key'
-          });
-
-        if (error) throw error;
-      } catch (error) {
-        console.error('Error saving setting:', error);
-        toast({
-          title: "Error",
-          description: `Failed to save ${key}`,
-          variant: "destructive",
-        });
-      }
-    }, 1000),
-    [toast]
-  );
-
   const updateSetting = (key: string, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }));
     
@@ -133,18 +90,12 @@ export const AdminSettings = () => {
     if (key === 'theme') {
       applyTheme(value);
     }
-
-    // Auto-save after updating
-    saveSettingDebounced(key, value);
   };
 
-  const handleWatermarkUpload = async (file: File) => {
+  const uploadWatermark = async (file: File) => {
     try {
-      setUploadingWatermark(true);
-      setWatermarkFile(file);
-      
       const fileExt = file.name.split('.').pop();
-      const fileName = `watermark-${Date.now()}.${fileExt}`;
+      const fileName = `watermark.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('photos')
@@ -156,30 +107,22 @@ export const AdminSettings = () => {
         .from('photos')
         .getPublicUrl(fileName);
 
-      // Update the watermark image setting
-      updateSetting('watermark_image', data.publicUrl);
-      
-      toast({
-        title: "Success",
-        description: "Watermark uploaded successfully",
-      });
-
-      setWatermarkFile(null);
+      return data.publicUrl;
     } catch (error) {
       console.error('Error uploading watermark:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload watermark",
-        variant: "destructive",
-      });
-    } finally {
-      setUploadingWatermark(false);
+      throw error;
     }
   };
 
   const saveAllSettings = async () => {
     try {
       setSaving(true);
+
+      // Handle watermark upload if there's a file
+      if (watermarkFile) {
+        const watermarkUrl = await uploadWatermark(watermarkFile);
+        setSettings(prev => ({ ...prev, watermark_image: watermarkUrl }));
+      }
 
       const updates = Object.entries(settings).map(([key, value]) => ({
         setting_key: key,
@@ -198,6 +141,8 @@ export const AdminSettings = () => {
         title: "Success",
         description: "All settings saved successfully",
       });
+
+      setWatermarkFile(null);
     } catch (error) {
       console.error('Error saving settings:', error);
       toast({
@@ -477,25 +422,15 @@ export const AdminSettings = () => {
                           accept="image/*"
                           onChange={(e) => {
                             if (e.target.files?.[0]) {
-                              handleWatermarkUpload(e.target.files[0]);
+                              setWatermarkFile(e.target.files[0]);
                             }
                           }}
                           className="hidden"
                           id="watermark-upload"
                         />
                         <label htmlFor="watermark-upload" className="cursor-pointer">
-                          <Button variant="outline" type="button" disabled={uploadingWatermark}>
-                            {uploadingWatermark ? (
-                              <>
-                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                Uploading...
-                              </>
-                            ) : (
-                              <>
-                                <Upload className="h-4 w-4 mr-2" />
-                                {settings.watermark_image ? 'Change Watermark' : 'Upload Watermark'}
-                              </>
-                            )}
+                          <Button variant="outline" type="button">
+                            {watermarkFile ? 'Change Watermark' : 'Upload Watermark'}
                           </Button>
                         </label>
                         {watermarkFile && (
