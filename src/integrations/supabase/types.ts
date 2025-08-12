@@ -14,24 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          resource_id: string | null
+          resource_type: string
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          resource_id?: string | null
+          resource_type: string
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          resource_id?: string | null
+          resource_type?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
-          email: string
           id: string
-          password_hash: string
         }
         Insert: {
           created_at?: string
-          email: string
           id?: string
-          password_hash: string
         }
         Update: {
           created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          read_status: boolean | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          read_status?: boolean | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
           email?: string
           id?: string
-          password_hash?: string
+          message?: string
+          name?: string
+          read_status?: boolean | null
         }
         Relationships: []
       }
@@ -83,12 +137,75 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          role: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id: string
+          role?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          role?: string | null
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          created_at: string
+          id: string
+          setting_key: string
+          setting_value: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          setting_key: string
+          setting_value?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          setting_key?: string
+          setting_value?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      log_admin_action: {
+        Args: {
+          p_action: string
+          p_resource_type: string
+          p_resource_id?: string
+          p_details?: Json
+        }
+        Returns: undefined
+      }
+      validate_photo_metadata: {
+        Args: {
+          p_title: string
+          p_location?: string
+          p_description?: string
+          p_category?: string
+          p_tags?: string[]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
