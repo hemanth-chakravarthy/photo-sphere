@@ -59,6 +59,33 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_form_rate_limit: {
+        Row: {
+          blocked_until: string | null
+          first_submission: string | null
+          id: string
+          ip_address: unknown
+          last_submission: string | null
+          submission_count: number | null
+        }
+        Insert: {
+          blocked_until?: string | null
+          first_submission?: string | null
+          id?: string
+          ip_address: unknown
+          last_submission?: string | null
+          submission_count?: number | null
+        }
+        Update: {
+          blocked_until?: string | null
+          first_submission?: string | null
+          id?: string
+          ip_address?: unknown
+          last_submission?: string | null
+          submission_count?: number | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           admin_notes: string | null
@@ -195,6 +222,10 @@ export type Database = {
           p_details?: Json
         }
         Returns: undefined
+      }
+      sanitize_text_input: {
+        Args: { input_text: string }
+        Returns: string
       }
       validate_photo_metadata: {
         Args: {

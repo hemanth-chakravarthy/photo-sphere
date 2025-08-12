@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { LogOut, Upload, Settings, Images } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminLogin from "@/components/AdminLogin";
@@ -17,6 +18,9 @@ const Admin = () => {
   const { user, isAdmin, signOut, loading } = useAuth();
   const { refetch } = usePhotos();
   const [showLogin, setShowLogin] = useState(false);
+  
+  // Enable session timeout for admin users
+  useSessionTimeout();
 
   useEffect(() => {
     if (!loading && !isAdmin) {

@@ -2,23 +2,10 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { ContactForm } from "@/components/ContactForm";
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 
 const About = () => {
-  const { toast } = useToast();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toast({
-      title: "Message sent!",
-      description: "Thank you for your message. We'll get back to you soon.",
-    });
-    e.target.reset();
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -109,31 +96,7 @@ const About = () => {
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="Your name" required />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="Your email" required />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="message">Message</Label>
-                    <textarea
-                      id="message"
-                      className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
-                      placeholder="Your message"
-                      required
-                    />
-                  </div>
-                  
-                  <Button type="submit" className="w-full">
-                    Send Message
-                  </Button>
-                </form>
+                <ContactForm />
               </div>
             </motion.div>
           </motion.div>
