@@ -76,12 +76,12 @@ export const ContactMessages = () => {
   const loadMessages = async () => {
     try {
       const { data, error } = await supabase
-        .from('contact_messages')
+        .from('contact_messages' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setMessages(data || []);
+      setMessages((data as unknown as ContactMessage[]) || []);
     } catch (error) {
       console.error('Error loading messages:', error);
       toast({
@@ -97,7 +97,7 @@ export const ContactMessages = () => {
   const markAsRead = async (messageId: string) => {
     try {
       const { error } = await supabase
-        .from('contact_messages')
+        .from('contact_messages' as any)
         .update({ read_status: true })
         .eq('id', messageId);
 
@@ -121,7 +121,7 @@ export const ContactMessages = () => {
   const saveAdminNotes = async (messageId: string, notes: string) => {
     try {
       const { error } = await supabase
-        .from('contact_messages')
+        .from('contact_messages' as any)
         .update({ admin_notes: notes })
         .eq('id', messageId);
 

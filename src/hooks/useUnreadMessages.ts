@@ -7,13 +7,13 @@ export const useUnreadMessages = () => {
   useEffect(() => {
     const loadUnreadCount = async () => {
       try {
-        const { data, error } = await supabase
-          .from('contact_messages')
-          .select('id', { count: 'exact' })
+        const { data, error, count } = await supabase
+          .from('contact_messages' as any)
+          .select('id', { count: 'exact', head: true })
           .eq('read_status', false);
 
         if (error) throw error;
-        setUnreadCount(data?.length || 0);
+        setUnreadCount(count || 0);
       } catch (error) {
         console.error('Error loading unread messages count:', error);
       }
