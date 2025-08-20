@@ -27,17 +27,61 @@ export const ContactMessages = () => {
 
   useEffect(() => {
     loadMessages();
-  }, []);
+
+    // Set up real-time subscription for new messages
+    const channel = supabase
+      .channel('contact_messages_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'contact_messages'
+        },
+        (payload) => {
+          console.log('New contact message received:', payload);
+          const newMessage = payload.new as ContactMessage;
+          setMessages(prev => [newMessage, ...prev]);
+          toast({
+            title: "New Message Received",
+            description: `New message from ${newMessage.name}`,
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'contact_messages'
+        },
+        (payload) => {
+          console.log('Contact message updated:', payload);
+          const updatedMessage = payload.new as ContactMessage;
+          setMessages(prev => 
+            prev.map(msg => 
+              msg.id === updatedMessage.id ? updatedMessage : msg
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [toast]);
 
   const loadMessages = async () => {
     try {
       const { data, error } = await supabase
-        .from('contact_messages' as any)
+        .from('contact_messages')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setMessages((data as unknown as ContactMessage[]) || []);
+      setMessages(data || []);
     } catch (error) {
       console.error('Error loading messages:', error);
       toast({
@@ -53,7 +97,7 @@ export const ContactMessages = () => {
   const markAsRead = async (messageId: string) => {
     try {
       const { error } = await supabase
-        .from('contact_messages' as any)
+        .from('contact_messages')
         .update({ read_status: true })
         .eq('id', messageId);
 
@@ -77,7 +121,7 @@ export const ContactMessages = () => {
   const saveAdminNotes = async (messageId: string, notes: string) => {
     try {
       const { error } = await supabase
-        .from('contact_messages' as any)
+        .from('contact_messages')
         .update({ admin_notes: notes })
         .eq('id', messageId);
 
@@ -118,6 +162,11 @@ export const ContactMessages = () => {
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
             Contact Messages
+            {messages.filter(msg => !msg.read_status).length > 0 && (
+              <Badge variant="destructive" className="ml-2">
+                {messages.filter(msg => !msg.read_status).length} new
+              </Badge>
+            )}
           </CardTitle>
           <CardDescription>
             View and manage messages from visitors
@@ -152,9 +201,12 @@ export const ContactMessages = () => {
                           <User className="h-4 w-4" />
                           <span className="font-medium">{message.name}</span>
                           {!message.read_status && (
-                            <Badge variant="secondary" className="text-xs">
-                              New
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              <div className="h-2 w-2 bg-red-500 rounded-full" />
+                              <Badge variant="secondary" className="text-xs">
+                                New
+                              </Badge>
+                            </div>
                           )}
                         </div>
                         

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { LogOut, Upload, Settings, Images } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminLogin from "@/components/AdminLogin";
@@ -17,6 +18,7 @@ import Footer from "@/components/Footer";
 const Admin = () => {
   const { user, isAdmin, signOut, loading } = useAuth();
   const { refetch } = usePhotos();
+  const { unreadCount } = useUnreadMessages();
   const [showLogin, setShowLogin] = useState(false);
   
   // Enable session timeout for admin users
@@ -95,9 +97,12 @@ const Admin = () => {
                     <Images size={16} />
                     Manage Photos
                   </TabsTrigger>
-                  <TabsTrigger value="settings" className="flex items-center gap-2">
+                  <TabsTrigger value="settings" className="flex items-center gap-2 relative">
                     <Settings size={16} />
                     Settings
+                    {unreadCount > 0 && (
+                      <div className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full" />
+                    )}
                   </TabsTrigger>
                 </TabsList>
 
