@@ -7,11 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Globe, Palette, Home, Droplets, Mail, MessageSquare, Upload, Loader2 } from "lucide-react";
+import { Droplets, Mail, MessageSquare, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { ContactMessages } from "@/components/settings/ContactMessages";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface SiteSettings {
   [key: string]: any;
@@ -22,7 +21,6 @@ export const AdminSettings = () => {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
-  const { theme, setTheme } = useTheme();
 
   // Debounced save function
   const debounceTimeout = useState<NodeJS.Timeout | null>(null);
@@ -76,11 +74,6 @@ export const AdminSettings = () => {
 
         if (error) throw error;
 
-        // Special handling for theme changes
-        if (key === 'theme') {
-          setTheme(value);
-        }
-
         toast({
           title: "Saved",
           description: `${key.replace('_', ' ')} updated`,
@@ -96,7 +89,7 @@ export const AdminSettings = () => {
     }, 1000);
 
     debounceTimeout[1](timeout);
-  }, [toast, setTheme]);
+  }, [toast]);
 
   const updateSetting = (key: string, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }));
@@ -166,20 +159,8 @@ export const AdminSettings = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="general" className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                <span className="hidden sm:inline">General</span>
-              </TabsTrigger>
-              <TabsTrigger value="appearance" className="flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                <span className="hidden sm:inline">Appearance</span>
-              </TabsTrigger>
-              <TabsTrigger value="homepage" className="flex items-center gap-2">
-                <Home className="h-4 w-4" />
-                <span className="hidden sm:inline">Homepage</span>
-              </TabsTrigger>
+          <Tabs defaultValue="watermark" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="watermark" className="flex items-center gap-2">
                 <Droplets className="h-4 w-4" />
                 <span className="hidden sm:inline">Watermark</span>
@@ -194,189 +175,6 @@ export const AdminSettings = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="general" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>General Site Settings</CardTitle>
-                  <CardDescription>
-                    Configure your site's basic information and branding
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="site-title">Site Title</Label>
-                      <Input
-                        id="site-title"
-                        value={getSetting('site_title')}
-                        onChange={(e) => updateSetting('site_title', e.target.value)}
-                        placeholder="My Photography Portfolio"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="tagline">Tagline</Label>
-                      <Input
-                        id="tagline"
-                        value={getSetting('site_tagline')}
-                        onChange={(e) => updateSetting('site_tagline', e.target.value)}
-                        placeholder="Capturing moments, creating memories"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Site Description</Label>
-                    <Textarea
-                      id="description"
-                      value={getSetting('site_description')}
-                      onChange={(e) => updateSetting('site_description', e.target.value)}
-                      placeholder="A brief description of your photography work..."
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="custom-domain">Custom Domain (Optional)</Label>
-                    <Input
-                      id="custom-domain"
-                      value={getSetting('custom_domain')}
-                      onChange={(e) => updateSetting('custom_domain', e.target.value)}
-                      placeholder="www.yoursite.com"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="appearance" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Appearance & Theme Settings</CardTitle>
-                  <CardDescription>
-                    Customize the look and feel of your photography portfolio
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-3">
-                    <Label>Color Theme</Label>
-                    <Select
-                      value={getSetting('theme', 'light')}
-                      onValueChange={(value) => updateSetting('theme', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select theme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light Theme</SelectItem>
-                        <SelectItem value="dark">Dark Theme</SelectItem>
-                        <SelectItem value="system">Auto (System Preference)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label>Font Family</Label>
-                    <Select
-                      value={getSetting('font_family', 'inter')}
-                      onValueChange={(value) => updateSetting('font_family', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a font" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="inter">Inter (Sans-serif)</SelectItem>
-                        <SelectItem value="playfair">Playfair Display (Serif)</SelectItem>
-                        <SelectItem value="roboto">Roboto (Sans-serif)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label>Gallery Layout</Label>
-                    <Select
-                      value={getSetting('gallery_layout', 'grid')}
-                      onValueChange={(value) => updateSetting('gallery_layout', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select layout" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="grid">Grid Layout</SelectItem>
-                        <SelectItem value="masonry">Masonry Layout</SelectItem>
-                        <SelectItem value="single">Single Column</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="homepage" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Homepage Layout Settings</CardTitle>
-                  <CardDescription>
-                    Configure what sections appear on your homepage and their content
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={getSetting('show_featured_photos', false)}
-                        onCheckedChange={(checked) => updateSetting('show_featured_photos', checked)}
-                      />
-                      <Label>Show Featured Photos Section</Label>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={getSetting('show_collections', true)}
-                        onCheckedChange={(checked) => updateSetting('show_collections', checked)}
-                      />
-                      <Label>Show Collections Section</Label>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={getSetting('show_about_section', true)}
-                        onCheckedChange={(checked) => updateSetting('show_about_section', checked)}
-                      />
-                      <Label>Show About Section</Label>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={getSetting('show_contact_form', true)}
-                        onCheckedChange={(checked) => updateSetting('show_contact_form', checked)}
-                      />
-                      <Label>Show Contact Form</Label>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="hero-title">Hero Section Title</Label>
-                    <Input
-                      id="hero-title"
-                      value={getSetting('hero_title')}
-                      onChange={(e) => updateSetting('hero_title', e.target.value)}
-                      placeholder="Welcome to my photography portfolio"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="hero-subtitle">Hero Section Subtitle</Label>
-                    <Textarea
-                      id="hero-subtitle"
-                      value={getSetting('hero_subtitle')}
-                      onChange={(e) => updateSetting('hero_subtitle', e.target.value)}
-                      placeholder="Capturing life's beautiful moments..."
-                      rows={2}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="watermark" className="mt-6">
               <Card>
