@@ -75,12 +75,14 @@ export const ContactMessages = () => {
 
   const loadMessages = async () => {
     try {
+      console.log('[ContactMessages] Loading messages...');
       const { data, error } = await supabase
         .from('contact_messages' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      console.log('[ContactMessages] Loaded messages count:', (data as any)?.length ?? 0);
       setMessages((data as unknown as ContactMessage[]) || []);
     } catch (error) {
       console.error('Error loading messages:', error);

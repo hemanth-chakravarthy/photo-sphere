@@ -102,12 +102,17 @@ export const ContactForm = () => {
     e.preventDefault();
     setRateLimitError(null);
 
+    console.log('[ContactForm] Submitting with data:', formData);
+
     if (!validateForm()) {
+      console.log('[ContactForm] Validation failed');
       return;
     }
+    console.log('[ContactForm] Validation passed');
 
     // Check rate limit
     const rateLimitResult = await checkRateLimit('contact_form', 3, 60); // 3 submissions per hour
+    console.log('[ContactForm] Rate limit result:', rateLimitResult);
     if (!rateLimitResult.isAllowed) {
       const resetTimeStr = rateLimitResult.resetTime ? 
         rateLimitResult.resetTime.toLocaleTimeString() : 
@@ -119,54 +124,61 @@ export const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
+      console.log('[ContactForm] Inserting into contact_messages...');
       const { error } = await supabase
-        .from('contact_messages')
-        .insert([{
-          name: formData.name.trim(),
-          email: formData.email.trim().toLowerCase(),
-          message: formData.message.trim()
-        }]);
+        .from('contact_messages' as any)
+        .insert([
+          {
+            name: formData.name.trim(),
+            email: formData.email.trim().toLowerCase(),
+            message: formData.message.trim(),
+          },
+        ]);
 
       if (error) {
+        console.error('[ContactForm] Insert error:', error);
         throw error;
       }
+      console.log('[ContactForm] Insert success');
 
       setSubmitted(true);
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: '', email: '', message: '' });
       toast({
-        title: "Success!",
+        title: 'Success!',
         description: "Your message has been sent successfully. We'll get back to you soon!",
       });
     } catch (error) {
       console.error('Error submitting contact form:', error);
-      
       // Handle specific validation errors from our database trigger
       if (error instanceof Error) {
-        if (error.message.includes('Name is required') || 
-            error.message.includes('Valid email is required') ||
-            error.message.includes('Message is required') ||
-            error.message.includes('must be less than')) {
+        if (
+          error.message.includes('Name is required') ||
+          error.message.includes('Valid email is required') ||
+          error.message.includes('Message is required') ||
+          error.message.includes('must be less than')
+        ) {
           toast({
-            title: "Validation Error",
+            title: 'Validation Error',
             description: error.message,
-            variant: "destructive",
+            variant: 'destructive',
           });
         } else {
           toast({
-            title: "Error",
-            description: "Failed to send message. Please try again later.",
-            variant: "destructive",
+            title: 'Error',
+            description: 'Failed to send message. Please try again later.',
+            variant: 'destructive',
           });
         }
       } else {
         toast({
-          title: "Error", 
-          description: "Failed to send message. Please try again later.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to send message. Please try again later.',
+          variant: 'destructive',
         });
       }
     } finally {
       setIsSubmitting(false);
+      console.log('[ContactForm] Submit finished');
     }
   };
 

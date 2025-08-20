@@ -13,7 +13,9 @@ export const useUnreadMessages = () => {
           .eq('read_status', false);
 
         if (error) throw error;
-        setUnreadCount(count || 0);
+        const newCount = count || 0;
+        setUnreadCount(newCount);
+        console.log('[useUnreadMessages] Initial unread count:', newCount);
       } catch (error) {
         console.error('Error loading unread messages count:', error);
       }
@@ -33,7 +35,11 @@ export const useUnreadMessages = () => {
         },
         () => {
           // New message added, increment count
-          setUnreadCount(prev => prev + 1);
+          setUnreadCount(prev => {
+            const next = prev + 1;
+            console.log('[useUnreadMessages] New message inserted. Count:', next);
+            return next;
+          });
         }
       )
       .on(
@@ -50,10 +56,18 @@ export const useUnreadMessages = () => {
           
           if (!oldMessage.read_status && newMessage.read_status) {
             // Message was marked as read, decrement count
-            setUnreadCount(prev => Math.max(0, prev - 1));
+            setUnreadCount(prev => {
+              const next = Math.max(0, prev - 1);
+              console.log('[useUnreadMessages] Message marked read. Count:', next);
+              return next;
+            });
           } else if (oldMessage.read_status && !newMessage.read_status) {
             // Message was marked as unread, increment count
-            setUnreadCount(prev => prev + 1);
+            setUnreadCount(prev => {
+              const next = prev + 1;
+              console.log('[useUnreadMessages] Message marked unread. Count:', next);
+              return next;
+            });
           }
         }
       )
