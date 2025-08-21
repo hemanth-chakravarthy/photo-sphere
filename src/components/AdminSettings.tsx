@@ -279,17 +279,30 @@ export const AdminSettings = () => {
                       </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="website-url">Website URL</Label>
+                      <Label htmlFor="linkedin-url">LinkedIn URL</Label>
                       <Input
-                        id="website-url"
-                        value={getSetting('website_url')}
-                        onChange={(e) => updateSetting('website_url', e.target.value)}
-                        placeholder="https://yourwebsite.com"
+                        id="linkedin-url"
+                        value={getSetting('linkedin_url')}
+                        onChange={(e) => updateSetting('linkedin_url', e.target.value)}
+                        placeholder="https://linkedin.com/in/yourusername"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Enter URL with or without https:// (e.g., yourwebsite.com)
+                        Enter URL with or without https:// (e.g., linkedin.com/in/username)
                       </p>
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="website-url">Website URL</Label>
+                    <Input
+                      id="website-url"
+                      value={getSetting('website_url')}
+                      onChange={(e) => updateSetting('website_url', e.target.value)}
+                      placeholder="https://yourwebsite.com"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Enter URL with or without https:// (e.g., yourwebsite.com)
+                    </p>
                   </div>
                 </CardContent>
               </Card>

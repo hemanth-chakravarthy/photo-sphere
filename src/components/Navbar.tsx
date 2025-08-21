@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, Search, X, Shield, Instagram, Twitter, Facebook, Globe, Mail } from "lucide-react";
+import { Menu, Search, X, Shield, Instagram, Twitter, Facebook, Globe, Mail, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,9 +29,7 @@ const Navbar = () => {
   }, []);
 
   const renderSocialIcon = (url: string | null, icon: React.ReactNode, label: string, isEmail: boolean = false) => {
-    if (!url || url.trim() === '') return null;
-    
-    const href = isEmail ? `mailto:${url}` : url;
+    const href = isEmail ? (url ? `mailto:${url}` : "#") : (url && url.trim() !== '' ? url : "#");
     
     return (
       <a
@@ -47,9 +45,7 @@ const Navbar = () => {
   };
 
   const renderMobileSocialLink = (url: string | null, icon: React.ReactNode, label: string, isEmail: boolean = false) => {
-    if (!url || url.trim() === '') return null;
-    
-    const href = isEmail ? `mailto:${url}` : url;
+    const href = isEmail ? (url ? `mailto:${url}` : "#") : (url && url.trim() !== '' ? url : "#");
     
     return (
       <a
@@ -133,6 +129,7 @@ const Navbar = () => {
               {renderSocialIcon(getSetting('contact_email'), <Mail size={20} />, 'Email', true)}
               {renderSocialIcon(getSetting('instagram_url'), <Instagram size={20} />, 'Instagram')}
               {renderSocialIcon(getSetting('twitter_url'), <Twitter size={20} />, 'Twitter')}
+              {renderSocialIcon(getSetting('linkedin_url'), <Linkedin size={20} />, 'LinkedIn')}
               {renderSocialIcon(getSetting('facebook_url'), <Facebook size={20} />, 'Facebook')}
               {renderSocialIcon(getSetting('website_url'), <Globe size={20} />, 'Website')}
               
@@ -207,6 +204,7 @@ const Navbar = () => {
             {renderMobileSocialLink(getSetting('contact_email'), <Mail size={24} />, 'Email', true)}
             {renderMobileSocialLink(getSetting('instagram_url'), <Instagram size={24} />, 'Instagram')}
             {renderMobileSocialLink(getSetting('twitter_url'), <Twitter size={24} />, 'Twitter')}
+            {renderMobileSocialLink(getSetting('linkedin_url'), <Linkedin size={24} />, 'LinkedIn')}
             {renderMobileSocialLink(getSetting('facebook_url'), <Facebook size={24} />, 'Facebook')}
             {renderMobileSocialLink(getSetting('website_url'), <Globe size={24} />, 'Website')}
           </nav>
