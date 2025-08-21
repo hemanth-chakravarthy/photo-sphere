@@ -96,13 +96,33 @@ export const AdminSettings = () => {
     return emailRegex.test(email);
   };
 
-  const validateURL = (url: string) => {
-    if (!url) return true; // Optional field
+  const validateAndNormalizeURL = (url: string) => {
+    if (!url || url.trim() === '') return { isValid: true, normalizedUrl: '' };
+    
+    const trimmedUrl = url.trim();
+    
+    // Check if it's already a full URL
+    if (trimmedUrl.startsWith('http://') || trimmedUrl.startsWith('https://')) {
+      try {
+        new URL(trimmedUrl);
+        return { isValid: true, normalizedUrl: trimmedUrl };
+      } catch {
+        return { isValid: false, normalizedUrl: trimmedUrl };
+      }
+    }
+    
+    // Try to normalize by adding https://
+    const normalizedUrl = `https://${trimmedUrl}`;
     try {
-      new URL(url);
-      return true;
+      new URL(normalizedUrl);
+      // Additional validation for common patterns
+      const urlPattern = /^https:\/\/[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]*\.?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?([/?].*)?$/;
+      if (urlPattern.test(normalizedUrl)) {
+        return { isValid: true, normalizedUrl };
+      }
+      return { isValid: false, normalizedUrl: trimmedUrl };
     } catch {
-      return false;
+      return { isValid: false, normalizedUrl: trimmedUrl };
     }
   };
 
@@ -117,13 +137,18 @@ export const AdminSettings = () => {
       return;
     }
 
-    if ((key.includes('_url') || key === 'website_url') && value && !validateURL(value)) {
-      toast({
-        title: "Invalid URL",
-        description: "Please enter a valid URL (e.g., https://example.com)",
-        variant: "destructive",
-      });
-      return;
+    if ((key.includes('_url') || key === 'website_url') && value) {
+      const { isValid, normalizedUrl } = validateAndNormalizeURL(value);
+      if (!isValid) {
+        toast({
+          title: "Invalid URL",
+          description: "Please enter a valid URL (e.g., example.com or https://example.com)",
+          variant: "destructive",
+        });
+        return;
+      }
+      // Use the normalized URL for saving
+      value = normalizedUrl;
     }
 
     setSettings(prev => ({ ...prev, [key]: value }));
@@ -223,7 +248,7 @@ export const AdminSettings = () => {
                         placeholder="https://instagram.com/yourusername"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Full URL including https://
+                        Enter URL with or without https:// (e.g., instagram.com/username)
                       </p>
                     </div>
                     <div className="space-y-2">
@@ -235,7 +260,7 @@ export const AdminSettings = () => {
                         placeholder="https://facebook.com/yourpage"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Full URL including https://
+                        Enter URL with or without https:// (e.g., facebook.com/yourpage)
                       </p>
                     </div>
                   </div>
@@ -250,7 +275,7 @@ export const AdminSettings = () => {
                         placeholder="https://twitter.com/yourusername"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Full URL including https://
+                        Enter URL with or without https:// (e.g., twitter.com/username)
                       </p>
                     </div>
                     <div className="space-y-2">
@@ -262,7 +287,7 @@ export const AdminSettings = () => {
                         placeholder="https://yourwebsite.com"
                       />
                       <p className="text-xs text-muted-foreground">
-                        Your main website or portfolio URL
+                        Enter URL with or without https:// (e.g., yourwebsite.com)
                       </p>
                     </div>
                   </div>
