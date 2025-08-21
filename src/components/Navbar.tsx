@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Menu, Search, X, Shield, Instagram } from "lucide-react";
+import { Menu, Search, X, Shield, Instagram, Twitter, Facebook, Globe, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,6 +27,44 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const renderSocialIcon = (url: string | null, icon: React.ReactNode, label: string, isEmail: boolean = false) => {
+    if (!url || url.trim() === '') return null;
+    
+    const href = isEmail ? `mailto:${url}` : url;
+    
+    return (
+      <a
+        href={href}
+        target={isEmail ? undefined : "_blank"}
+        rel={isEmail ? undefined : "noopener noreferrer"}
+        className="text-photosphere-800 hover:text-accent transition-colors"
+        aria-label={label}
+      >
+        {icon}
+      </a>
+    );
+  };
+
+  const renderMobileSocialLink = (url: string | null, icon: React.ReactNode, label: string, isEmail: boolean = false) => {
+    if (!url || url.trim() === '') return null;
+    
+    const href = isEmail ? `mailto:${url}` : url;
+    
+    return (
+      <a
+        href={href}
+        target={isEmail ? undefined : "_blank"}
+        rel={isEmail ? undefined : "noopener noreferrer"}
+        className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-colors flex items-center justify-center gap-2"
+        onClick={() => setIsOpen(false)}
+        aria-label={label}
+      >
+        {icon}
+        {label}
+      </a>
+    );
+  };
 
   return (
     <>
@@ -92,18 +129,12 @@ const Navbar = () => {
               )}
             </nav>
 
-            <div className="flex items-center space-x-4">
-              {getSetting('instagram_url') && (
-                <a
-                  href={getSetting('instagram_url')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-photosphere-800 hover:text-accent transition-colors"
-                  aria-label="Instagram"
-                >
-                  <Instagram size={20} />
-                </a>
-              )}
+            <div className="flex items-center space-x-3">
+              {renderSocialIcon(getSetting('contact_email'), <Mail size={20} />, 'Email', true)}
+              {renderSocialIcon(getSetting('instagram_url'), <Instagram size={20} />, 'Instagram')}
+              {renderSocialIcon(getSetting('twitter_url'), <Twitter size={20} />, 'Twitter')}
+              {renderSocialIcon(getSetting('facebook_url'), <Facebook size={20} />, 'Facebook')}
+              {renderSocialIcon(getSetting('website_url'), <Globe size={20} />, 'Website')}
               
               <button
                 className="text-photosphere-800 hover:text-accent transition-colors"
@@ -172,19 +203,12 @@ const Navbar = () => {
               </Link>
             )}
             
-            {getSetting('instagram_url') && (
-              <a
-                href={getSetting('instagram_url')}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-colors flex items-center justify-center gap-2"
-                onClick={() => setIsOpen(false)}
-                aria-label="Instagram"
-              >
-                <Instagram size={24} />
-                Instagram
-              </a>
-            )}
+            {/* Social Media Links */}
+            {renderMobileSocialLink(getSetting('contact_email'), <Mail size={24} />, 'Email', true)}
+            {renderMobileSocialLink(getSetting('instagram_url'), <Instagram size={24} />, 'Instagram')}
+            {renderMobileSocialLink(getSetting('twitter_url'), <Twitter size={24} />, 'Twitter')}
+            {renderMobileSocialLink(getSetting('facebook_url'), <Facebook size={24} />, 'Facebook')}
+            {renderMobileSocialLink(getSetting('website_url'), <Globe size={24} />, 'Website')}
           </nav>
         </div>
       </header>
