@@ -1,17 +1,23 @@
 import { useState, useEffect } from "react";
-import { Menu, Search, X, Shield, Instagram, Twitter, Facebook, Globe, Mail, Linkedin } from "lucide-react";
+import { Menu, Search, X, Shield, Instagram, Twitter, Facebook, Globe, Mail, Linkedin, Copy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SearchModal from "@/components/SearchModal";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMailModalOpen, setIsMailModalOpen] = useState(false);
   const { isAdmin } = useAuth();
   const { getSetting } = useSiteSettings();
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,14 +35,74 @@ const Navbar = () => {
   }, []);
 
   const renderSocialIcon = (url: string | null, icon: React.ReactNode, label: string, isEmail: boolean = false) => {
-    const href = isEmail ? (url ? `mailto:${url}` : "#") : (url && url.trim() !== '' ? url : "#");
+    if (isEmail) {
+      return (
+        <Dialog open={isMailModalOpen} onOpenChange={setIsMailModalOpen}>
+          <DialogTrigger asChild>
+            <button
+              className="text-photosphere-800 hover:text-accent hover:scale-110 transition-all duration-200"
+              aria-label={label}
+            >
+              {icon}
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Contact Email</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Input
+                  readOnly
+                  value={url || "No email set"}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  onClick={() => {
+                    if (url) {
+                      navigator.clipboard.writeText(url);
+                      toast({
+                        title: "Copied!",
+                        description: "Email copied to clipboard",
+                      });
+                    }
+                  }}
+                  disabled={!url}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <Button
+                onClick={() => {
+                  if (url) {
+                    navigator.clipboard.writeText(url);
+                    toast({
+                      title: "Copied!",
+                      description: "Email copied to clipboard",
+                    });
+                  }
+                }}
+                disabled={!url}
+                className="w-full"
+              >
+                Copy Email
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      );
+    }
+
+    const href = url && url.trim() !== '' ? url : "#";
     
     return (
       <a
         href={href}
-        target={isEmail ? undefined : "_blank"}
-        rel={isEmail ? undefined : "noopener noreferrer"}
-        className="text-photosphere-800 hover:text-accent transition-colors"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-photosphere-800 hover:text-accent hover:scale-110 transition-all duration-200"
         aria-label={label}
       >
         {icon}
@@ -45,14 +111,27 @@ const Navbar = () => {
   };
 
   const renderMobileSocialLink = (url: string | null, icon: React.ReactNode, label: string, isEmail: boolean = false) => {
-    const href = isEmail ? (url ? `mailto:${url}` : "#") : (url && url.trim() !== '' ? url : "#");
+    if (isEmail) {
+      return (
+        <button
+          onClick={() => setIsMailModalOpen(true)}
+          className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105"
+          aria-label={label}
+        >
+          {icon}
+          {label}
+        </button>
+      );
+    }
+
+    const href = url && url.trim() !== '' ? url : "#";
     
     return (
       <a
         href={href}
-        target={isEmail ? undefined : "_blank"}
-        rel={isEmail ? undefined : "noopener noreferrer"}
-        className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-colors flex items-center justify-center gap-2"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105"
         onClick={() => setIsOpen(false)}
         aria-label={label}
       >
@@ -134,7 +213,7 @@ const Navbar = () => {
               {renderSocialIcon(getSetting('website_url'), <Globe size={20} />, 'Website')}
               
               <button
-                className="text-photosphere-800 hover:text-accent transition-colors"
+                className="text-photosphere-800 hover:text-accent hover:scale-110 transition-all duration-200"
                 aria-label="Search"
                 onClick={() => setIsSearchOpen(true)}
               >
