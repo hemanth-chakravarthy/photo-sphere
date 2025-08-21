@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Droplets, Mail, MessageSquare, Upload, Loader2 } from "lucide-react";
+import { Mail, MessageSquare, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { ContactMessages } from "@/components/settings/ContactMessages";
@@ -19,7 +19,7 @@ interface SiteSettings {
 export const AdminSettings = () => {
   const [settings, setSettings] = useState<SiteSettings>({});
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  
   const { toast } = useToast();
 
   // Debounced save function
@@ -100,45 +100,6 @@ export const AdminSettings = () => {
     return settings[key] !== undefined ? settings[key] : defaultValue;
   };
 
-  const handleWatermarkUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setUploading(true);
-      
-      const fileExt = file.name.split('.').pop();
-      const fileName = `watermark.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('photos')
-        .upload(fileName, file, {
-          upsert: true
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('photos')
-        .getPublicUrl(fileName);
-
-      updateSetting('watermark_url', data.publicUrl);
-
-      toast({
-        title: "Success",
-        description: "Watermark uploaded successfully",
-      });
-    } catch (error) {
-      console.error('Error uploading watermark:', error);
-      toast({
-        title: "Error",
-        description: "Failed to upload watermark",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -159,12 +120,8 @@ export const AdminSettings = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="watermark" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="watermark" className="flex items-center gap-2">
-                <Droplets className="h-4 w-4" />
-                <span className="hidden sm:inline">Watermark</span>
-              </TabsTrigger>
+          <Tabs defaultValue="contact" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="contact" className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
                 <span className="hidden sm:inline">Contact</span>
@@ -176,99 +133,6 @@ export const AdminSettings = () => {
             </TabsList>
 
 
-            <TabsContent value="watermark" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Watermark Settings</CardTitle>
-                  <CardDescription>
-                    Upload and configure watermarks for your photos
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={getSetting('enable_watermark', false)}
-                        onCheckedChange={(checked) => updateSetting('enable_watermark', checked)}
-                      />
-                      <Label>Enable Watermark on Images</Label>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="watermark-upload">Watermark Image</Label>
-                      <div className="flex items-center gap-4">
-                        <Button
-                          onClick={() => document.getElementById('watermark-input')?.click()}
-                          disabled={uploading}
-                          className="flex items-center gap-2"
-                        >
-                          {uploading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Upload className="h-4 w-4" />
-                          )}
-                          Upload Watermark
-                        </Button>
-                        <input
-                          id="watermark-input"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleWatermarkUpload}
-                          className="hidden"
-                        />
-                        {getSetting('watermark_url') && (
-                          <div className="text-sm text-muted-foreground">
-                            Watermark uploaded ✓
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {getSetting('watermark_url') && (
-                      <div className="space-y-2">
-                        <Label>Watermark Preview</Label>
-                        <img
-                          src={getSetting('watermark_url')}
-                          alt="Watermark preview"
-                          className="max-w-32 max-h-32 object-contain border rounded"
-                        />
-                      </div>
-                    )}
-
-                    <div className="space-y-3">
-                      <Label>Watermark Position</Label>
-                      <Select
-                        value={getSetting('watermark_position', 'bottom-right')}
-                        onValueChange={(value) => updateSetting('watermark_position', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select position" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="top-left">Top Left</SelectItem>
-                          <SelectItem value="top-right">Top Right</SelectItem>
-                          <SelectItem value="bottom-left">Bottom Left</SelectItem>
-                          <SelectItem value="bottom-right">Bottom Right</SelectItem>
-                          <SelectItem value="center">Center</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="watermark-opacity">Watermark Opacity (%)</Label>
-                      <Input
-                        id="watermark-opacity"
-                        type="number"
-                        min="10"
-                        max="100"
-                        value={getSetting('watermark_opacity', 50)}
-                        onChange={(e) => updateSetting('watermark_opacity', parseInt(e.target.value))}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="contact" className="mt-6">
               <Card>

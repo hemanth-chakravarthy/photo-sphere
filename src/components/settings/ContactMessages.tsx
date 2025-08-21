@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Clock, User, MessageSquare } from "lucide-react";
+import { MessageSquare, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { ContactMessagesList } from "./ContactMessagesList";
 
 interface ContactMessage {
   id: string;
@@ -154,7 +155,12 @@ export const ContactMessages = () => {
   };
 
   if (loading) {
-    return <div>Loading messages...</div>;
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading messages...</span>
+      </div>
+    );
   }
 
   return (
@@ -175,63 +181,14 @@ export const ContactMessages = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {messages.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No messages yet</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <Card 
-                  key={message.id} 
-                  className={`cursor-pointer transition-colors ${
-                    !message.read_status ? 'border-primary/50 bg-primary/5' : ''
-                  }`}
-                  onClick={() => {
-                    setSelectedMessage(message);
-                    setAdminNotes(message.admin_notes || "");
-                    if (!message.read_status) {
-                      markAsRead(message.id);
-                    }
-                  }}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2 flex-1">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          <span className="font-medium">{message.name}</span>
-                          {!message.read_status && (
-                            <div className="flex items-center gap-2">
-                              <div className="h-2 w-2 bg-red-500 rounded-full" />
-                              <Badge variant="secondary" className="text-xs">
-                                New
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Mail className="h-4 w-4" />
-                          <span>{message.email}</span>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Clock className="h-4 w-4" />
-                          <span>{formatDate(message.created_at)}</span>
-                        </div>
-                        
-                        <p className="text-sm mt-2 line-clamp-2">
-                          {message.message}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+          <ContactMessagesList 
+            messages={messages} 
+            onMessageClick={(message) => {
+              setSelectedMessage(message);
+              setAdminNotes(message.admin_notes || "");
+            }}
+            onMessageUpdate={loadMessages}
+          />
         </CardContent>
       </Card>
 
