@@ -97,6 +97,25 @@ export const ContactMessages = () => {
     }
   };
 
+  const handleMessageDelete = (messageId: string) => {
+    console.log('[ContactMessages] Optimistically removing message:', messageId);
+    setMessages(prev => prev.filter(msg => msg.id !== messageId));
+    
+    // Clear selected message if it was deleted
+    if (selectedMessage?.id === messageId) {
+      setSelectedMessage(null);
+    }
+  };
+
+  const handleMessageRead = (messageId: string) => {
+    console.log('[ContactMessages] Optimistically marking message as read:', messageId);
+    setMessages(prev => 
+      prev.map(msg => 
+        msg.id === messageId ? { ...msg, read_status: true } : msg
+      )
+    );
+  };
+
   const markAsRead = async (messageId: string) => {
     try {
       const { error } = await supabase
@@ -188,6 +207,8 @@ export const ContactMessages = () => {
               setAdminNotes(message.admin_notes || "");
             }}
             onMessageUpdate={loadMessages}
+            onMessageDelete={handleMessageDelete}
+            onMessageRead={handleMessageRead}
           />
         </CardContent>
       </Card>

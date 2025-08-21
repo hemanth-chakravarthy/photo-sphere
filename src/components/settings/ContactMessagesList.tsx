@@ -21,11 +21,14 @@ interface ContactMessagesListProps {
   messages: ContactMessage[];
   onMessageClick: (message: ContactMessage) => void;
   onMessageUpdate: () => void;
+  onMessageDelete: (messageId: string) => void;
+  onMessageRead: (messageId: string) => void;
 }
 
-export const ContactMessagesList = ({ messages, onMessageClick, onMessageUpdate }: ContactMessagesListProps) => {
+export const ContactMessagesList = ({ messages, onMessageClick, onMessageUpdate, onMessageDelete, onMessageRead }: ContactMessagesListProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
+  const [messageToDelete, setMessageToDelete] = useState<ContactMessage | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
   const formatDate = (dateString: string) => {
@@ -35,28 +38,43 @@ export const ContactMessagesList = ({ messages, onMessageClick, onMessageUpdate 
   const handleDelete = async () => {
     if (!messageToDelete) return;
 
+    setIsDeleting(true);
+    
     try {
+      console.log('[ContactMessagesList] Deleting message:', messageToDelete.id);
+      
+      // Optimistic update - remove from UI immediately
+      onMessageDelete(messageToDelete.id);
+
       const { error } = await supabase
-        .from('contact_messages' as any)
+        .from('contact_messages')
         .delete()
-        .eq('id', messageToDelete);
+        .eq('id', messageToDelete.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('[ContactMessagesList] Delete error:', error);
+        throw error;
+      }
 
+      console.log('[ContactMessagesList] Message deleted successfully');
+      
       toast({
         title: "Success",
         description: "Message deleted successfully",
       });
-      
-      onMessageUpdate();
     } catch (error) {
-      console.error('Error deleting message:', error);
+      console.error('[ContactMessagesList] Error deleting message:', error);
+      
+      // Revert optimistic update by refreshing the data
+      onMessageUpdate();
+      
       toast({
         title: "Error",
-        description: "Failed to delete message",
+        description: "Failed to delete message. Please try again.",
         variant: "destructive",
       });
     } finally {
+      setIsDeleting(false);
       setDeleteDialogOpen(false);
       setMessageToDelete(null);
     }
@@ -64,15 +82,28 @@ export const ContactMessagesList = ({ messages, onMessageClick, onMessageUpdate 
 
   const markAsRead = async (messageId: string) => {
     try {
+      console.log('[ContactMessagesList] Marking message as read:', messageId);
+      
+      // Optimistic update
+      onMessageRead(messageId);
+
       const { error } = await supabase
-        .from('contact_messages' as any)
+        .from('contact_messages')
         .update({ read_status: true })
         .eq('id', messageId);
 
-      if (error) throw error;
-      onMessageUpdate();
+      if (error) {
+        console.error('[ContactMessagesList] Mark as read error:', error);
+        throw error;
+      }
+
+      console.log('[ContactMessagesList] Message marked as read successfully');
     } catch (error) {
-      console.error('Error marking message as read:', error);
+      console.error('[ContactMessagesList] Error marking message as read:', error);
+      
+      // Revert optimistic update
+      onMessageUpdate();
+      
       toast({
         title: "Error",
         description: "Failed to mark message as read",
@@ -160,7 +191,7 @@ export const ContactMessagesList = ({ messages, onMessageClick, onMessageUpdate 
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setMessageToDelete(message.id);
+                      setMessageToDelete(message);
                       setDeleteDialogOpen(true);
                     }}
                     title="Delete message"
@@ -183,9 +214,13 @@ export const ContactMessagesList = ({ messages, onMessageClick, onMessageUpdate 
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete} 
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
