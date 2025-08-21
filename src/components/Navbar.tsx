@@ -1,9 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { Menu, Search, X, Shield } from "lucide-react";
+import { Menu, Search, X, Shield, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import SearchModal from "@/components/SearchModal";
 
 const Navbar = () => {
@@ -11,6 +12,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { isAdmin } = useAuth();
+  const { getSetting } = useSiteSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,7 +92,19 @@ const Navbar = () => {
               )}
             </nav>
 
-            <div className="flex items-center">
+            <div className="flex items-center space-x-4">
+              {getSetting('instagram_url') && (
+                <a
+                  href={getSetting('instagram_url')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-photosphere-800 hover:text-accent transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram size={20} />
+                </a>
+              )}
+              
               <button
                 className="text-photosphere-800 hover:text-accent transition-colors"
                 aria-label="Search"
@@ -156,6 +170,20 @@ const Navbar = () => {
                 <Shield size={20} />
                 Admin
               </Link>
+            )}
+            
+            {getSetting('instagram_url') && (
+              <a
+                href={getSetting('instagram_url')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-colors flex items-center justify-center gap-2"
+                onClick={() => setIsOpen(false)}
+                aria-label="Instagram"
+              >
+                <Instagram size={24} />
+                Instagram
+              </a>
             )}
           </nav>
         </div>
