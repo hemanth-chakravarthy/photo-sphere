@@ -95,11 +95,15 @@ const Navbar = () => {
       );
     }
 
-    const href = url && url.trim() !== '' ? url : "#";
+    // Normalize URL - add https:// if not present
+    let normalizedUrl = url?.trim() || '';
+    if (normalizedUrl && !normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = `https://${normalizedUrl}`;
+    }
     
     return (
       <a
-        href={href}
+        href={normalizedUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="text-photosphere-800 hover:text-accent hover:scale-110 transition-all duration-200"
@@ -124,11 +128,15 @@ const Navbar = () => {
       );
     }
 
-    const href = url && url.trim() !== '' ? url : "#";
+    // Normalize URL - add https:// if not present
+    let normalizedUrl = url?.trim() || '';
+    if (normalizedUrl && !normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = `https://${normalizedUrl}`;
+    }
     
     return (
       <a
-        href={href}
+        href={normalizedUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="text-photosphere-800 hover:text-accent text-2xl font-medium transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105"
@@ -205,12 +213,15 @@ const Navbar = () => {
             </nav>
 
             <div className="flex items-center space-x-3">
-              {renderSocialIcon(getSetting('contact_email'), <Mail size={20} />, 'Email', true)}
-              {renderSocialIcon(getSetting('instagram_url'), <Instagram size={20} />, 'Instagram')}
-              {renderSocialIcon(getSetting('twitter_url'), <Twitter size={20} />, 'Twitter')}
-              {renderSocialIcon(getSetting('linkedin_url'), <Linkedin size={20} />, 'LinkedIn')}
-              {renderSocialIcon(getSetting('facebook_url'), <Facebook size={20} />, 'Facebook')}
-              {renderSocialIcon(getSetting('website_url'), <Globe size={20} />, 'Website')}
+              {/* Email icon - always show if contact_email exists */}
+              {getSetting('contact_email') && renderSocialIcon(getSetting('contact_email'), <Mail size={20} />, 'Email', true)}
+              
+              {/* Social Media Icons - only show if URLs exist */}
+              {getSetting('instagram_url') && renderSocialIcon(getSetting('instagram_url'), <Instagram size={20} />, 'Instagram')}
+              {getSetting('twitter_url') && renderSocialIcon(getSetting('twitter_url'), <Twitter size={20} />, 'Twitter')}
+              {getSetting('linkedin_url') && renderSocialIcon(getSetting('linkedin_url'), <Linkedin size={20} />, 'LinkedIn')}
+              {getSetting('facebook_url') && renderSocialIcon(getSetting('facebook_url'), <Facebook size={20} />, 'Facebook')}
+              {getSetting('website_url') && renderSocialIcon(getSetting('website_url'), <Globe size={20} />, 'Website')}
               
               <button
                 className="text-photosphere-800 hover:text-accent hover:scale-110 transition-all duration-200"
@@ -280,12 +291,12 @@ const Navbar = () => {
             )}
             
             {/* Social Media Links */}
-            {renderMobileSocialLink(getSetting('contact_email'), <Mail size={24} />, 'Email', true)}
-            {renderMobileSocialLink(getSetting('instagram_url'), <Instagram size={24} />, 'Instagram')}
-            {renderMobileSocialLink(getSetting('twitter_url'), <Twitter size={24} />, 'Twitter')}
-            {renderMobileSocialLink(getSetting('linkedin_url'), <Linkedin size={24} />, 'LinkedIn')}
-            {renderMobileSocialLink(getSetting('facebook_url'), <Facebook size={24} />, 'Facebook')}
-            {renderMobileSocialLink(getSetting('website_url'), <Globe size={24} />, 'Website')}
+            {getSetting('contact_email') && renderMobileSocialLink(getSetting('contact_email'), <Mail size={24} />, 'Email', true)}
+            {getSetting('instagram_url') && renderMobileSocialLink(getSetting('instagram_url'), <Instagram size={24} />, 'Instagram')}
+            {getSetting('twitter_url') && renderMobileSocialLink(getSetting('twitter_url'), <Twitter size={24} />, 'Twitter')}
+            {getSetting('linkedin_url') && renderMobileSocialLink(getSetting('linkedin_url'), <Linkedin size={24} />, 'LinkedIn')}
+            {getSetting('facebook_url') && renderMobileSocialLink(getSetting('facebook_url'), <Facebook size={24} />, 'Facebook')}
+            {getSetting('website_url') && renderMobileSocialLink(getSetting('website_url'), <Globe size={24} />, 'Website')}
           </nav>
         </div>
       </header>
