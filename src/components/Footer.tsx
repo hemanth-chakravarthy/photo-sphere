@@ -1,8 +1,29 @@
 
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Instagram, Twitter, Facebook, Heart } from "lucide-react";
+import { Instagram, Twitter, Facebook, Heart, Globe, Mail } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Footer = () => {
+  const { getSetting, loading } = useSiteSettings();
+
+  const renderSocialLink = (url: string | null, icon: React.ReactNode, label: string, isEmail: boolean = false) => {
+    if (!url || url.trim() === '') return null;
+    
+    const href = isEmail ? `mailto:${url}` : url;
+    
+    return (
+      <a 
+        href={href}
+        target={isEmail ? undefined : "_blank"}
+        rel={isEmail ? undefined : "noopener noreferrer"}
+        className="text-photosphere-200 hover:text-white transition-colors"
+        title={label}
+      >
+        {icon}
+      </a>
+    );
+  };
   return (
     <footer className="bg-photosphere-900 text-white">
       <div className="container mx-auto px-6 py-12">
@@ -45,32 +66,42 @@ const Footer = () => {
             
             <div>
               <h4 className="font-medium mb-4">Connect</h4>
-              <div className="flex space-x-4">
-                <a 
-                  href="https://instagram.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-photosphere-200 hover:text-white transition-colors"
-                >
-                  <Instagram size={20} />
-                </a>
-                <a 
-                  href="https://twitter.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-photosphere-200 hover:text-white transition-colors"
-                >
-                  <Twitter size={20} />
-                </a>
-                <a 
-                  href="https://facebook.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-photosphere-200 hover:text-white transition-colors"
-                >
-                  <Facebook size={20} />
-                </a>
-              </div>
+              {loading ? (
+                <div className="flex space-x-4">
+                  <div className="w-5 h-5 bg-photosphere-700 animate-pulse rounded"></div>
+                  <div className="w-5 h-5 bg-photosphere-700 animate-pulse rounded"></div>
+                  <div className="w-5 h-5 bg-photosphere-700 animate-pulse rounded"></div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-4">
+                  {renderSocialLink(
+                    getSetting('contact_email'), 
+                    <Mail size={20} />, 
+                    'Email',
+                    true
+                  )}
+                  {renderSocialLink(
+                    getSetting('instagram_url'), 
+                    <Instagram size={20} />, 
+                    'Instagram'
+                  )}
+                  {renderSocialLink(
+                    getSetting('twitter_url'), 
+                    <Twitter size={20} />, 
+                    'Twitter'
+                  )}
+                  {renderSocialLink(
+                    getSetting('facebook_url'), 
+                    <Facebook size={20} />, 
+                    'Facebook'
+                  )}
+                  {renderSocialLink(
+                    getSetting('website_url'), 
+                    <Globe size={20} />, 
+                    'Website'
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

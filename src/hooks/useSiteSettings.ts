@@ -12,6 +12,27 @@ export function useSiteSettings() {
 
   useEffect(() => {
     loadSettings();
+
+    // Set up real-time subscription for settings changes
+    const channel = supabase
+      .channel('site_settings_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'site_settings'
+        },
+        (payload) => {
+          console.log('[useSiteSettings] Settings changed:', payload);
+          loadSettings(); // Reload settings when they change
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const loadSettings = async () => {

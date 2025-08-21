@@ -76,7 +76,7 @@ export const AdminSettings = () => {
 
         toast({
           title: "Saved",
-          description: `${key.replace('_', ' ')} updated`,
+          description: `${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} updated successfully`,
         });
       } catch (error) {
         console.error(`Error saving ${key}:`, error);
@@ -91,7 +91,41 @@ export const AdminSettings = () => {
     debounceTimeout[1](timeout);
   }, [toast]);
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateURL = (url: string) => {
+    if (!url) return true; // Optional field
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const updateSetting = (key: string, value: any) => {
+    // Validate specific fields before updating
+    if (key === 'contact_email' && value && !validateEmail(value)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if ((key.includes('_url') || key === 'website_url') && value && !validateURL(value)) {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid URL (e.g., https://example.com)",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSettings(prev => ({ ...prev, [key]: value }));
     debouncedSave(key, value);
   };
@@ -153,6 +187,9 @@ export const AdminSettings = () => {
                         onChange={(e) => updateSetting('contact_email', e.target.value)}
                         placeholder="hello@yoursite.com"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        This email will appear in the footer and can be used for contact links
+                      </p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="contact-phone">Phone Number</Label>
@@ -185,6 +222,9 @@ export const AdminSettings = () => {
                         onChange={(e) => updateSetting('instagram_url', e.target.value)}
                         placeholder="https://instagram.com/yourusername"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Full URL including https://
+                      </p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="facebook-url">Facebook URL</Label>
@@ -194,6 +234,9 @@ export const AdminSettings = () => {
                         onChange={(e) => updateSetting('facebook_url', e.target.value)}
                         placeholder="https://facebook.com/yourpage"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Full URL including https://
+                      </p>
                     </div>
                   </div>
 
@@ -206,6 +249,9 @@ export const AdminSettings = () => {
                         onChange={(e) => updateSetting('twitter_url', e.target.value)}
                         placeholder="https://twitter.com/yourusername"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Full URL including https://
+                      </p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="website-url">Website URL</Label>
@@ -215,6 +261,9 @@ export const AdminSettings = () => {
                         onChange={(e) => updateSetting('website_url', e.target.value)}
                         placeholder="https://yourwebsite.com"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Your main website or portfolio URL
+                      </p>
                     </div>
                   </div>
                 </CardContent>
