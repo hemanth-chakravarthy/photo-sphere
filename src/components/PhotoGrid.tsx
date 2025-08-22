@@ -23,35 +23,29 @@ const PhotoGrid = ({ photos, columns = 3 }: PhotoGridProps) => {
     setIsModalOpen(false);
   };
 
-  // Calculate column distribution
-  const columnPhotos = Array.from({ length: columns }, () => [] as Photo[]);
-  
-  photos.forEach((photo, index) => {
-    columnPhotos[index % columns].push(photo);
-  });
-
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {columnPhotos.map((column, columnIndex) => (
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 auto-rows-max"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {photos.map((photo, index) => (
           <motion.div
-            key={`column-${columnIndex}`}
-            className="flex flex-col gap-4 md:gap-6"
+            key={photo.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: columnIndex * 0.2 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
           >
-            {column.map((photo) => (
-              <PhotoCard
-                key={photo.id}
-                photo={photo}
-                priority={columnIndex === 0}
-                onClick={handlePhotoClick}
-              />
-            ))}
+            <PhotoCard
+              photo={photo}
+              priority={index < 6}
+              onClick={handlePhotoClick}
+            />
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {selectedPhoto && (
         <PhotoModal
