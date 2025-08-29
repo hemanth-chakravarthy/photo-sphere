@@ -1,9 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X } from "lucide-react";
-import { photos } from "@/data/photos";
-import { Photo } from "@/data/photos";
+import { Search, X, Loader2 } from "lucide-react";
+import { Photo } from "@/hooks/usePhotos";
+import { useSearch } from "@/hooks/useSearch";
 import { cn } from "@/lib/utils";
 
 interface SearchModalProps {
@@ -13,25 +13,22 @@ interface SearchModalProps {
 
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
+  const [searchResults, setSearchResults] = useState<Photo[]>([]);
+  const { searchPhotos, loading, error } = useSearch();
 
   useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredPhotos([]);
-      return;
-    }
+    const timeoutId = setTimeout(async () => {
+      if (searchTerm.trim() === "") {
+        setSearchResults([]);
+        return;
+      }
 
-    const filtered = photos.filter((photo) => {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        photo.title.toLowerCase().includes(searchLower) ||
-        photo.location?.toLowerCase().includes(searchLower) ||
-        photo.tags?.some(tag => tag.toLowerCase().includes(searchLower))
-      );
-    });
+      const results = await searchPhotos(searchTerm);
+      setSearchResults(results);
+    }, 300); // Debounce search
 
-    setFilteredPhotos(filtered);
-  }, [searchTerm]);
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, searchPhotos]);
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -70,23 +67,33 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-photosphere-500" />
                 <input
                   type="text"
-                  placeholder="Search by title, location, or tags..."
+                  placeholder="Search by title or category..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
                   autoFocus
                 />
+                {loading && (
+                  <Loader2 size={20} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-photosphere-500 animate-spin" />
+                )}
               </div>
             </div>
 
             <div className="max-h-96 overflow-y-auto p-6">
-              {searchTerm.trim() === "" ? (
+              {error ? (
+                <p className="text-red-500 text-center">Error: {error}</p>
+              ) : searchTerm.trim() === "" ? (
                 <p className="text-photosphere-500 text-center">Start typing to search photos...</p>
-              ) : filteredPhotos.length === 0 ? (
+              ) : loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 size={24} className="animate-spin text-photosphere-500" />
+                  <span className="ml-2 text-photosphere-500">Searching...</span>
+                </div>
+              ) : searchResults.length === 0 ? (
                 <p className="text-photosphere-500 text-center">No photos found matching your search.</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {filteredPhotos.map((photo) => (
+                  {searchResults.map((photo) => (
                     <div
                       key={photo.id}
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
@@ -102,10 +109,13 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                       />
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-photosphere-800 truncate">{photo.title}</h3>
+                        {photo.category && (
+                          <p className="text-sm text-photosphere-500 truncate">Category: {photo.category}</p>
+                        )}
                         {photo.location && (
                           <p className="text-sm text-photosphere-500 truncate">{photo.location}</p>
                         )}
-                        {photo.tags && (
+                        {photo.tags && photo.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-1">
                             {photo.tags.slice(0, 3).map((tag) => (
                               <span
