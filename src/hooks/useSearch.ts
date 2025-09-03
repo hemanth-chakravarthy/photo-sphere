@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Photo } from "./usePhotos";
 
@@ -6,7 +6,7 @@ export const useSearch = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const searchPhotos = async (searchTerm: string): Promise<Photo[]> => {
+  const searchPhotos = useCallback(async (searchTerm: string): Promise<Photo[]> => {
     if (!searchTerm.trim()) {
       return [];
     }
@@ -31,7 +31,7 @@ export const useSearch = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return {
     searchPhotos,

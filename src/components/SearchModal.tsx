@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Photo } from "@/hooks/usePhotos";
 import { useSearch } from "@/hooks/useSearch";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ interface SearchModalProps {
 }
 
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Photo[]>([]);
   const { searchPhotos, loading, error } = useSearch();
@@ -98,8 +100,8 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                       key={photo.id}
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                       onClick={() => {
+                        navigate(`/gallery?photoId=${photo.id}`);
                         onClose();
-                        // Navigate to photo or open modal
                       }}
                     >
                       <img

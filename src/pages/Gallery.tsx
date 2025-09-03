@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 import PhotoGrid from "@/components/PhotoGrid";
 import { usePhotos } from "@/hooks/usePhotos";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const Gallery = () => {
   const { photos, loading, error } = usePhotos();
