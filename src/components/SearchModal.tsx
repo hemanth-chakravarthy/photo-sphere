@@ -30,7 +30,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     }, 300); // Debounce search
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm, searchPhotos]);
+  }, [searchTerm]); // Remove searchPhotos from dependencies to prevent re-render loop
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
