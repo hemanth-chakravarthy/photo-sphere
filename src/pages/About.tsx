@@ -51,11 +51,16 @@ const About = () => {
                   transition={{ duration: 0.5, delay: 0.4 }}
                   className="relative rounded-lg overflow-hidden aspect-[4/3] w-full"
                 >
-                  <img 
-                    src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80"
-                    alt="Nature photography"
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="sketchfab-embed-wrapper w-full h-full">
+                    <iframe 
+                      title="Nikon Foto Camera" 
+                      frameBorder="0" 
+                      allowFullScreen 
+                      allow="autoplay; fullscreen; xr-spatial-tracking" 
+                      src="https://sketchfab.com/models/00977989eef4469bb813d4637a6375b1/embed"
+                      className="w-full h-full"
+                    />
+                  </div>
                 </motion.div>
             </div>
 
