@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ContactForm } from "@/components/ContactForm";
+import ModelViewer from "@/components/ModelViewer";
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 
 const About = () => {
@@ -45,22 +46,19 @@ const About = () => {
                 </p>
               </motion.div>
               
-              <motion.div
+                <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
-                  className="relative rounded-lg overflow-hidden aspect-[4/3] w-full"
+                  className="relative rounded-lg overflow-hidden aspect-[4/3] w-full bg-background"
                 >
-                  <div className="sketchfab-embed-wrapper w-full h-full">
-                    <iframe 
-                      title="Nikon Foto Camera" 
-                      frameBorder="0" 
-                      allowFullScreen 
-                      allow="autoplay; fullscreen; xr-spatial-tracking" 
-                      src="https://sketchfab.com/models/00977989eef4469bb813d4637a6375b1/embed"
-                      className="w-full h-full"
-                    />
-                  </div>
+                  <ModelViewer
+                    src="/models/camera.glb"
+                    alt="Professional Camera 3D Model"
+                    autoRotate={true}
+                    cameraControls={true}
+                    loading="lazy"
+                  />
                 </motion.div>
             </div>
 
