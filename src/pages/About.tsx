@@ -50,7 +50,7 @@ const About = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
-                  className="relative rounded-lg overflow-hidden aspect-[4/3] w-full bg-background"
+                  className="relative rounded-lg overflow-hidden aspect-[4/3] w-full h-96 bg-background"
                 >
                   <ModelViewer
                     src="/models/camera.glb"
