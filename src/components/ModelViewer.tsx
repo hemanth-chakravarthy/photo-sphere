@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 declare global {
   namespace JSX {
@@ -39,8 +39,36 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
   cameraControls = true,
   loading = "lazy"
 }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const modelRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const modelElement = modelRef.current;
+    if (!modelElement) return;
+
+    const handleLoad = () => {
+      setIsLoading(false);
+      setHasError(false);
+    };
+
+    const handleError = () => {
+      setIsLoading(false);
+      setHasError(true);
+    };
+
+    modelElement.addEventListener('load', handleLoad);
+    modelElement.addEventListener('error', handleError);
+
+    return () => {
+      modelElement.removeEventListener('load', handleLoad);
+      modelElement.removeEventListener('error', handleError);
+    };
+  }, [src]);
+
   return (
     <model-viewer
+      ref={modelRef}
       src={src}
       alt={alt}
       auto-rotate={autoRotate}
@@ -54,12 +82,21 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
       className={`w-full h-full ${className}`}
       style={{ backgroundColor: 'transparent' }}
     >
-      <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-sm text-muted-foreground">Loading 3D model...</p>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+            <p className="text-sm text-muted-foreground">Loading 3D model...</p>
+          </div>
         </div>
-      </div>
+      )}
+      {hasError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">Failed to load 3D model</p>
+          </div>
+        </div>
+      )}
     </model-viewer>
   );
 };
