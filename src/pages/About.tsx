@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,7 +6,6 @@ import ModelViewer from "@/components/ModelViewer";
 import { Mail, Phone, MapPin, Github, Linkedin } from "lucide-react";
 
 const About = () => {
-
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
@@ -46,20 +44,20 @@ const About = () => {
                 </p>
               </motion.div>
               
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  className="relative rounded-lg overflow-hidden aspect-[4/3] w-full h-96 bg-background"
-                >
-                  <ModelViewer
-                    src="/models/camera.glb"
-                    alt="Professional Camera 3D Model"
-                    autoRotate={true}
-                    cameraControls={true}
-                    loading="lazy"
-                  />
-                </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="relative rounded-lg overflow-hidden w-96 h-200 bg-background mx-auto" 
+              >
+                <ModelViewer
+                  src="/models/camera.glb"
+                  alt="Professional Camera 3D Model"
+                  autoRotate={true}
+                  cameraControls={true}
+                  loading="lazy"
+                />
+              </motion.div>
             </div>
 
             <motion.div
@@ -77,15 +75,15 @@ const About = () => {
                   <div className="space-y-4 mb-6">
                     <div className="flex items-center text-photosphere-600">
                       <Mail className="w-5 h-5 mr-2" />
-                      <span>hello@photosphere.com</span>
+                      <span>hemanthchinnu363@gmail.com</span>
                     </div>
                     <div className="flex items-center text-photosphere-600">
                       <Phone className="w-5 h-5 mr-2" />
-                      <span>+1 (555) 123-4567</span>
+                      <span>+91 957********</span>
                     </div>
                     <div className="flex items-center text-photosphere-600">
                       <MapPin className="w-5 h-5 mr-2" />
-                      <span>San Francisco, CA</span>
+                      <span>Hyderabad, IND</span>
                     </div>
                   </div>
                   
