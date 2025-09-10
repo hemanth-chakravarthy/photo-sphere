@@ -11,14 +11,13 @@ interface HeroProps {
 const Hero = ({ title, subtitle, scrollToGallery }: HeroProps) => {
   return (
     <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background hero image */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1469474968028-56623f02e42e"
-          alt="Hero background"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-photosphere-950/30 via-photosphere-950/40 to-photosphere-950/70"></div>
+      {/* Starry background */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+        {/* Stars */}
+        <div className="stars-small"></div>
+        <div className="stars-medium"></div>
+        <div className="stars-large"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900/50"></div>
       </div>
 
       {/* Content */}
