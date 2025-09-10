@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Send, AlertCircle, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useRateLimit } from "@/hooks/useRateLimit";
+// Rate limiting is now handled server-side in the Edge Function
 
 export const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +20,7 @@ export const ContactForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [rateLimitError, setRateLimitError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { checkRateLimit } = useRateLimit();
+  // Rate limiting is now handled server-side
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -100,85 +100,53 @@ export const ContactForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setRateLimitError(null);
-
-    console.log('[ContactForm] Submitting with data:', formData);
-
+    
     if (!validateForm()) {
-      console.log('[ContactForm] Validation failed');
-      return;
-    }
-    console.log('[ContactForm] Validation passed');
-
-    // Check rate limit
-    const rateLimitResult = await checkRateLimit('contact_form', 3, 60); // 3 submissions per hour
-    console.log('[ContactForm] Rate limit result:', rateLimitResult);
-    if (!rateLimitResult.isAllowed) {
-      const resetTimeStr = rateLimitResult.resetTime ? 
-        rateLimitResult.resetTime.toLocaleTimeString() : 
-        'in a while';
-      setRateLimitError(`Too many submissions. Please try again after ${resetTimeStr}.`);
       return;
     }
 
     setIsSubmitting(true);
+    setRateLimitError(null);
 
     try {
-      console.log('[ContactForm] Inserting into contact_messages...');
-      const { error } = await supabase
-        .from('contact_messages' as any)
-        .insert([
-          {
-            name: formData.name.trim(),
-            email: formData.email.trim().toLowerCase(),
-            message: formData.message.trim(),
-          },
-        ]);
+      // Use the secure Edge Function instead of direct database insert
+      const { data, error } = await supabase.functions.invoke('submit-contact', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          message: formData.message
+        }
+      });
 
       if (error) {
-        console.error('[ContactForm] Insert error:', error);
         throw error;
       }
-      console.log('[ContactForm] Insert success');
+
+      if (data?.error) {
+        // Handle rate limiting and validation errors from the Edge Function
+        if (data.error.includes('Rate limit') || data.error.includes('Too many submissions')) {
+          setRateLimitError(data.error);
+          return;
+        }
+        throw new Error(data.error);
+      }
 
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
+      
       toast({
-        title: 'Success!',
+        title: "Success!",
         description: "Your message has been sent successfully. We'll get back to you soon!",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting contact form:', error);
-      // Handle specific validation errors from our database trigger
-      if (error instanceof Error) {
-        if (
-          error.message.includes('Name is required') ||
-          error.message.includes('Valid email is required') ||
-          error.message.includes('Message is required') ||
-          error.message.includes('must be less than')
-        ) {
-          toast({
-            title: 'Validation Error',
-            description: error.message,
-            variant: 'destructive',
-          });
-        } else {
-          toast({
-            title: 'Error',
-            description: 'Failed to send message. Please try again later.',
-            variant: 'destructive',
-          });
-        }
-      } else {
-        toast({
-          title: 'Error',
-          description: 'Failed to send message. Please try again later.',
-          variant: 'destructive',
-        });
-      }
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
-      console.log('[ContactForm] Submit finished');
     }
   };
 
