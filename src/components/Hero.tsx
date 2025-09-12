@@ -11,14 +11,8 @@ interface HeroProps {
 const Hero = ({ title, subtitle, scrollToGallery }: HeroProps) => {
   return (
     <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Starry background */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-        {/* Stars */}
-        <div className="stars-small"></div>
-        <div className="stars-medium"></div>
-        <div className="stars-large"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900/50"></div>
-      </div>
+      {/* Background */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"></div>
 
       {/* Content */}
       <div className="container mx-auto px-6 relative z-10 text-center">
