@@ -1,7 +1,6 @@
 
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import heroBackground from "@/assets/hero-background.jpg";
 
 interface HeroProps {
   title: string;
@@ -12,12 +11,14 @@ interface HeroProps {
 const Hero = ({ title, subtitle, scrollToGallery }: HeroProps) => {
   return (
     <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBackground})` }}
-      >
-        <div className="absolute inset-0 bg-black/40"></div>
+      {/* Background hero image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1469474968028-56623f02e42e"
+          alt="Hero background"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-photosphere-950/30 via-photosphere-950/40 to-photosphere-950/70"></div>
       </div>
 
       {/* Content */}
@@ -31,7 +32,7 @@ const Hero = ({ title, subtitle, scrollToGallery }: HeroProps) => {
             {title}
           </h1>
           {subtitle && (
-            <p className="text-xl text-white/90 max-w-2xl mx-auto">
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
               {subtitle}
             </p>
           )}
