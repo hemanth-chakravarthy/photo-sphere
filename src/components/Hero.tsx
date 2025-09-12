@@ -10,9 +10,7 @@ interface HeroProps {
 
 const Hero = ({ title, subtitle, scrollToGallery }: HeroProps) => {
   return (
-    <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"></div>
+    <section className="relative h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-white">
 
       {/* Content */}
       <div className="container mx-auto px-6 relative z-10 text-center">
@@ -21,11 +19,11 @@ const Hero = ({ title, subtitle, scrollToGallery }: HeroProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-white mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium text-foreground mb-4">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               {subtitle}
             </p>
           )}
@@ -33,7 +31,7 @@ const Hero = ({ title, subtitle, scrollToGallery }: HeroProps) => {
           {scrollToGallery && (
             <motion.button
               onClick={scrollToGallery}
-              className="mt-12 inline-flex items-center justify-center text-white border border-white/30 rounded-full w-12 h-12 hover:bg-white/10 transition-colors"
+              className="mt-12 inline-flex items-center justify-center text-foreground border border-border rounded-full w-12 h-12 hover:bg-accent hover:text-accent-foreground transition-colors"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: [0, 10, 0] }}
               transition={{
