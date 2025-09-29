@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight, Download, Share2 } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Download, Share2, MessageCircle, Mail, Copy, Twitter, Facebook } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Photo } from "@/hooks/usePhotos";
 import WatermarkedImage from "@/components/WatermarkedImage";
@@ -15,6 +15,7 @@ interface PhotoModalProps {
 const PhotoModal = ({ photo, isOpen, onClose, photos }: PhotoModalProps) => {
   const [currentPhoto, setCurrentPhoto] = useState<Photo>(photo);
   const [isLoading, setIsLoading] = useState(true);
+  const [showShareMenu, setShowShareMenu] = useState(false);
 
   // Find current photo index
   const currentIndex = photos.findIndex((p) => p.id === currentPhoto.id);
@@ -83,7 +84,13 @@ const PhotoModal = ({ photo, isOpen, onClose, photos }: PhotoModalProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
-          onClick={onClose}
+          onClick={(e) => {
+            if (showShareMenu) {
+              setShowShareMenu(false);
+            } else {
+              onClose();
+            }
+          }}
         >
           {/* Close button */}
           <button
@@ -153,25 +160,94 @@ const PhotoModal = ({ photo, isOpen, onClose, photos }: PhotoModalProps) => {
                 </div>
 
                 <div className="absolute top-4 right-4 flex space-x-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (navigator.share) {
-                        navigator.share({
-                          title: currentPhoto.title,
-                          text: currentPhoto.description || currentPhoto.title,
-                          url: window.location.href
-                        });
-                      } else {
-                        navigator.clipboard.writeText(window.location.href);
-                        // You could add a toast here to show copy success
-                      }
-                    }}
-                    className="p-2 text-white bg-black/30 rounded-full hover:bg-black/50 transition-colors"
-                    aria-label="Share photo"
-                  >
-                    <Share2 size={18} />
-                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowShareMenu(!showShareMenu);
+                      }}
+                      className="p-2 text-white bg-black/30 rounded-full hover:bg-black/50 transition-colors"
+                      aria-label="Share photo"
+                    >
+                      <Share2 size={18} />
+                    </button>
+                    
+                    {showShareMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                        className="absolute right-0 top-12 bg-white rounded-lg shadow-lg py-2 min-w-[200px] z-50"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() => {
+                            const shareUrl = `https://wa.me/?text=${encodeURIComponent(`${currentPhoto.title} - ${window.location.href}`)}`;
+                            window.open(shareUrl, '_blank');
+                            setShowShareMenu(false);
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <MessageCircle size={16} className="mr-3 text-green-600" />
+                          WhatsApp
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            const shareUrl = `mailto:?subject=${encodeURIComponent(currentPhoto.title)}&body=${encodeURIComponent(`Check out this photo: ${window.location.href}`)}`;
+                            window.location.href = shareUrl;
+                            setShowShareMenu(false);
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <Mail size={16} className="mr-3 text-blue-600" />
+                          Email
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${currentPhoto.title}`)}&url=${encodeURIComponent(window.location.href)}`;
+                            window.open(shareUrl, '_blank');
+                            setShowShareMenu(false);
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <Twitter size={16} className="mr-3 text-blue-400" />
+                          Twitter
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+                            window.open(shareUrl, '_blank');
+                            setShowShareMenu(false);
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <Facebook size={16} className="mr-3 text-blue-700" />
+                          Facebook
+                        </button>
+                        
+                        <div className="border-t border-gray-200 my-1"></div>
+                        
+                        <button
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(window.location.href);
+                              // You could add a toast notification here
+                              setShowShareMenu(false);
+                            } catch (error) {
+                              console.error('Failed to copy link:', error);
+                            }
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <Copy size={16} className="mr-3 text-gray-600" />
+                          Copy Link
+                        </button>
+                      </motion.div>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
