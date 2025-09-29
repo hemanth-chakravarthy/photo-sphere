@@ -5,6 +5,7 @@ import { Heart, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Photo } from "@/hooks/usePhotos";
 import WatermarkedImage from "@/components/WatermarkedImage";
+import { useFavorites } from "@/hooks/useFavorites";
 
 interface PhotoCardProps {
   photo: Photo;
@@ -15,6 +16,12 @@ interface PhotoCardProps {
 
 const PhotoCard = ({ photo, priority = false, className, onClick }: PhotoCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { toggleFavorite, isFavorited } = useFavorites();
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await toggleFavorite(photo.id);
+  };
 
   return (
     <motion.div
@@ -63,13 +70,18 @@ const PhotoCard = ({ photo, priority = false, className, onClick }: PhotoCardPro
               "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
               isHovered ? "opacity-100 bg-white/20 backdrop-blur-sm" : "opacity-0"
             )}
-            onClick={(e) => {
-              e.stopPropagation();
-              // TODO: Implement favorite functionality
-            }}
-            aria-label="Like photo"
+            onClick={handleFavoriteClick}
+            aria-label={isFavorited(photo.id) ? "Remove from favorites" : "Add to favorites"}
           >
-            <Heart size={16} className="text-white" />
+            <Heart 
+              size={16} 
+              className={cn(
+                "transition-colors duration-300",
+                isFavorited(photo.id) 
+                  ? "text-red-500 fill-red-500" 
+                  : "text-white"
+              )} 
+            />
           </button>
         </div>
       </div>
