@@ -30,7 +30,7 @@ const PhotoCard = ({ photo, priority = false, className, onClick }: PhotoCardPro
       onClick={() => onClick?.(photo)}
       whileHover={{ y: -5 }}
     >
-      <div className="overflow-hidden relative rounded-md bg-photosphere-100">
+      <div className="overflow-hidden relative rounded-md bg-photosphere-100" style={{ aspectRatio: `${photo.width}/${photo.height}` }}>
         <WatermarkedImage
           src={photo.src}
           alt={photo.alt}
