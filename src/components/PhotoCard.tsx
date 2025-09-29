@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Share2, MapPin } from "lucide-react";
+import { Heart, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Photo } from "@/hooks/usePhotos";
 import WatermarkedImage from "@/components/WatermarkedImage";
@@ -63,18 +63,13 @@ const PhotoCard = ({ photo, priority = false, className, onClick }: PhotoCardPro
               "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
               isHovered ? "opacity-100 bg-white/20 backdrop-blur-sm" : "opacity-0"
             )}
+            onClick={(e) => {
+              e.stopPropagation();
+              // TODO: Implement favorite functionality
+            }}
             aria-label="Like photo"
           >
             <Heart size={16} className="text-white" />
-          </button>
-          <button 
-            className={cn(
-              "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
-              isHovered ? "opacity-100 bg-white/20 backdrop-blur-sm" : "opacity-0"
-            )}
-            aria-label="Share photo"
-          >
-            <Share2 size={16} className="text-white" />
           </button>
         </div>
       </div>
