@@ -252,10 +252,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      sanitize_text_input: {
-        Args: { input_text: string }
-        Returns: string
-      }
+      sanitize_text_input: { Args: { input_text: string }; Returns: string }
       validate_photo_metadata: {
         Args: {
           p_category?: string
