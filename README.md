@@ -1,4 +1,4 @@
-# Project Title
+# Photo Sphere
 
 A modern web application built with **Vite**, **React**, **TypeScript**, **Tailwind CSS**, and **shadcn-ui**.  
 This project focuses on performance, clean UI components, and a scalable, developer-friendly structure.
